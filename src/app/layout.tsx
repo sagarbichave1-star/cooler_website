@@ -10,7 +10,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Tirupati Coolers | Find Your Cooler",
+    default: "Tirupati Coolers Surat | Explore Air Coolers",
     template: "%s | Tirupati Coolers",
   },
   description: siteConfig.description,
@@ -39,7 +39,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const organizationJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "LocalBusiness",
     name: siteConfig.name,
     url: siteConfig.url,
     address: {

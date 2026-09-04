@@ -2,18 +2,18 @@
 
 > Tirupati Coolers is a cooler company based in Surat, Gujarat, India. This website provides a product catalogue and direct WhatsApp enquiry path.
 
-## Main pages
+## Main page
 
-- [Home](/): Brand introduction, catalogue preview, selection guide, and contact section.
-- [Catalogue](/catalogue): Browse and filter available cooler categories.
-- [Search](/search): Search products by name, category, or intended setting.
+- [Home](/): Brand introduction, searchable product range, selection guide, Google reviews, contact details, and map.
+
+The public website is intentionally a single page. Catalogue, selection guidance, reviews, and contact information are available as sections on the homepage.
 
 ## Catalogue status
 
-Product models, images, specifications, certifications, contact details, and performance claims are awaiting verification. The current catalogue uses clearly identified category previews and should not be treated as a final technical source.
+Product models, images, specifications, certifications, exact contact details, and performance claims are awaiting verification. The current catalogue uses clearly identified category previews and should not be treated as a final technical source.
 
 ## Contact
 
 Location: Surat, Gujarat, India
 
-The verified WhatsApp number will be published before launch.
+The verified WhatsApp number and exact map location will be published before launch. Google reviews are retrieved from Google only when the required API credentials are configured.

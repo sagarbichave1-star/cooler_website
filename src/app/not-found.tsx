@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Page Not Found",
@@ -20,7 +20,6 @@ export default function NotFound() {
         <p>The address may have changed, or the page may no longer be available.</p>
         <div className="not-found-actions">
           <Link className="button" href="/"><ArrowLeft size={18} /> Back home</Link>
-          <Link className="button button-secondary" href="/catalogue"><Search size={18} /> Browse catalogue</Link>
         </div>
       </div>
     </section>

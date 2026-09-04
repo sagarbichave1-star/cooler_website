@@ -1,4 +1,4 @@
-const CACHE_VERSION = "tirupati-coolers-v1";
+const CACHE_VERSION = "tirupati-coolers-v2";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const PAGE_CACHE = `${CACHE_VERSION}-pages`;
 const OFFLINE_URL = "/offline.html";
@@ -23,6 +23,7 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith("/api/")) return;
 
   if (request.mode === "navigate") {
     const pageCacheKey = new Request(`${url.origin}${url.pathname}`);
