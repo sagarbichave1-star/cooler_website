@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { FloatingWhatsApp } from "@/components/floating-whatsapp";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <SiteHeader />
         <main id="main-content">{children}</main>
         <SiteFooter />
+        <ScrollToTop />
         <FloatingWhatsApp />
         <ServiceWorkerRegistration />
       </body>

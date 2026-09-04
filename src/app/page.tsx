@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  ArrowDown,
   ArrowRight,
   Check,
   Droplets,
@@ -15,6 +14,7 @@ import {
 import { CoolerVisual } from "@/components/cooler-visual";
 import { ProductCard } from "@/components/product-card";
 import { SectionHeading } from "@/components/section-heading";
+import { ScrollToExplore } from "@/components/scroll-to-explore";
 import { WhatsAppLink } from "@/components/whatsapp-link";
 import { products } from "@/data/products";
 
@@ -70,10 +70,7 @@ export default function HomePage() {
               </Link>
               <WhatsAppLink className="button button-secondary" label="Ask on WhatsApp" />
             </div>
-            <a className="scroll-cue" href="#featured">
-              <span><ArrowDown size={16} /></span>
-              Scroll to explore
-            </a>
+            <ScrollToExplore />
           </div>
 
           <div className="hero-product">

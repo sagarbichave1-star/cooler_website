@@ -13,9 +13,9 @@ export function FloatingWhatsApp() {
       target="_blank"
       rel="noreferrer"
       aria-label="Enquire with Tirupati Coolers on WhatsApp"
+      title="Enquire on WhatsApp"
     >
       <MessageCircle size={25} aria-hidden="true" />
-      <span className="sr-only">WhatsApp enquiry</span>
     </a>
   );
 }
