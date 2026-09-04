@@ -6,7 +6,7 @@ This project is designed to remain usable while product information is incomplet
 
 Edit `src/data/products.ts`. Each product needs:
 
-- A unique URL slug
+- A unique product identifier
 - Product name
 - Category
 - Short factual summary
@@ -52,3 +52,5 @@ Before launch, collect:
 - Verified certifications
 - Social profiles
 - Final domain
+- Google Maps listing URL and Place ID
+- Access to the verified Google Business Profile
