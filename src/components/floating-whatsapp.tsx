@@ -1,4 +1,4 @@
-import { MessageCircle } from "lucide-react";
+import { WhatsAppIcon } from "@/components/brand-icons";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function FloatingWhatsApp() {
@@ -15,7 +15,7 @@ export function FloatingWhatsApp() {
       aria-label="Enquire with Tirupati Coolers on WhatsApp"
       title="Enquire on WhatsApp"
     >
-      <MessageCircle size={25} aria-hidden="true" />
+      <WhatsAppIcon width={25} height={25} />
     </a>
   );
 }

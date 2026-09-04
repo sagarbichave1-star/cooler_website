@@ -1,4 +1,4 @@
-import { MessageCircle } from "lucide-react";
+import { WhatsAppIcon } from "@/components/brand-icons";
 import { buildWhatsAppUrl, productEnquiryMessage } from "@/lib/whatsapp";
 
 type WhatsAppLinkProps = {
@@ -21,7 +21,7 @@ export function WhatsAppLink({
 
   return (
     <a className={className} href={url} target="_blank" rel="noreferrer">
-      <MessageCircle size={18} />
+      <WhatsAppIcon width={18} height={18} />
       {label}
     </a>
   );
