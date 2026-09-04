@@ -1,11 +1,14 @@
+const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "";
+const configuredWhatsAppNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
+
 export const siteConfig = {
   name: "Tirupati Coolers",
   shortName: "Tirupati",
   description:
     "Explore the Tirupati Coolers catalogue and enquire about a product directly on WhatsApp.",
   location: "Surat, Gujarat, India",
-  url: process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "http://localhost:3000",
-  whatsappNumber: (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, ""),
+  url: configuredSiteUrl || "http://localhost:3000",
+  whatsappNumber: /^\d{10,15}$/.test(configuredWhatsAppNumber) ? configuredWhatsAppNumber : "",
   navigation: [
     { label: "Home", href: "/" },
     { label: "Catalogue", href: "/catalogue" },
@@ -14,4 +17,5 @@ export const siteConfig = {
   ],
 } as const;
 
-export const hasProductionUrl = siteConfig.url !== "http://localhost:3000";
+export const hasProductionUrl =
+  /^https:\/\//.test(configuredSiteUrl) && !configuredSiteUrl.includes("example.com");

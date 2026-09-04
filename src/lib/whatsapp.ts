@@ -1,9 +1,8 @@
 import { siteConfig } from "@/config/site";
 
 export function buildWhatsAppUrl(message: string) {
-  if (!siteConfig.whatsappNumber) return null;
-
-  return `https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(message)}`;
+  const recipient = siteConfig.whatsappNumber ? `/${siteConfig.whatsappNumber}` : "/";
+  return `https://wa.me${recipient}?text=${encodeURIComponent(message)}`;
 }
 
 export function productEnquiryMessage(productName: string, pageUrl?: string) {

@@ -1,29 +1,37 @@
 import type { Metadata } from "next";
-import { CatalogueExplorer } from "@/components/catalogue-explorer";
+import { Suspense } from "react";
+import { SearchPageContent } from "@/components/search-page-content";
+import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Search Catalogue",
   description: "Search the Tirupati Coolers product catalogue.",
+  alternates: { canonical: "/search" },
   robots: { index: false, follow: true },
+  openGraph: {
+    type: "website",
+    siteName: siteConfig.name,
+    title: "Search Catalogue | Tirupati Coolers",
+    description: "Search the Tirupati Coolers product catalogue.",
+    url: "/search",
+    images: ["/opengraph-image"],
+  },
 };
 
-type SearchPageProps = {
-  searchParams: Promise<{ q?: string | string[] }>;
-};
-
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const params = await searchParams;
-  const query = Array.isArray(params.q) ? params.q[0] || "" : params.q || "";
-
+export default function SearchPage() {
   return (
-    <section className="search-results-page">
+    <Suspense fallback={<SearchPageFallback />}>
+      <SearchPageContent />
+    </Suspense>
+  );
+}
+
+function SearchPageFallback() {
+  return (
+    <section className="search-results-page" aria-busy="true" aria-label="Loading search">
       <div className="container">
-        <div className="search-page-heading">
-          <p className="eyebrow">Catalogue search</p>
-          <h1>{query ? <>Results for <span>&ldquo;{query}&rdquo;</span></> : "What are you looking for?"}</h1>
-          <p>Search by cooler type, product name, or intended space.</p>
-        </div>
-        <CatalogueExplorer initialQuery={query} compactHeading />
+        <div className="skeleton skeleton-title" />
+        <div className="skeleton skeleton-control" />
       </div>
     </section>
   );

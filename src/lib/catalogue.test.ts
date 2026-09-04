@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { filterProducts } from "@/data/products";
-import { productEnquiryMessage } from "@/lib/whatsapp";
+import { buildWhatsAppUrl, productEnquiryMessage } from "@/lib/whatsapp";
 
 describe("catalogue search", () => {
   it("finds a product by its intended use", () => {
@@ -27,5 +27,9 @@ describe("WhatsApp enquiry copy", () => {
 
     expect(message).toContain("Tower Cooler");
     expect(message).toContain("https://example.com/catalogue/tower-cooler");
+  });
+
+  it("creates a number-free WhatsApp share link before a number is configured", () => {
+    expect(buildWhatsAppUrl("Hello")).toBe("https://wa.me/?text=Hello");
   });
 });

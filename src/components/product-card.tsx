@@ -14,7 +14,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     <article className="product-card" style={{ "--card-index": index } as CSSProperties}>
       <Link className="product-visual-link" href={`/catalogue/${product.slug}`} aria-label={`View ${product.name}`}>
         <span className="product-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-        <CoolerVisual tone={product.tone} compact />
+        <CoolerVisual visualId={`card-${product.slug}`} tone={product.tone} compact />
       </Link>
       <div className="product-card-content">
         <p className="product-category">{product.category} series</p>

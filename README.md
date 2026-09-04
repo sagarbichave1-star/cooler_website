@@ -37,7 +37,7 @@ NEXT_PUBLIC_SITE_URL=https://www.example.com
 NEXT_PUBLIC_WHATSAPP_NUMBER=919999999999
 ```
 
-The WhatsApp number must include the country code and contain digits only. Until it is configured, enquiry controls are visibly disabled. The preview site also blocks indexing until a production URL is configured.
+The WhatsApp number must include the country code and contain digits only. Until it is configured, enquiry controls use WhatsApp's recipient chooser with a prefilled message. The preview site blocks indexing until a production URL is configured.
 
 ## Product catalogue
 
@@ -52,8 +52,9 @@ npm run dev
 npm run lint
 npm run test
 npm run build
-npm run start
 ```
+
+The production-ready static website is generated in `out`. Upload that directory to any static host that supports directory index files.
 
 ## Search and enquiry
 

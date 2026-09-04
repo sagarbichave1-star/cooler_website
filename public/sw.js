@@ -25,16 +25,17 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
+    const pageCacheKey = new Request(`${url.origin}${url.pathname}`);
     event.respondWith(
       fetch(request)
         .then((response) => {
           if (response.ok) {
             const copy = response.clone();
-            caches.open(PAGE_CACHE).then((cache) => cache.put(request, copy));
+            caches.open(PAGE_CACHE).then((cache) => cache.put(pageCacheKey, copy));
           }
           return response;
         })
-        .catch(async () => (await caches.match(request)) || caches.match(OFFLINE_URL)),
+        .catch(async () => (await caches.match(pageCacheKey)) || caches.match(OFFLINE_URL)),
     );
     return;
   }

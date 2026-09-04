@@ -27,13 +27,9 @@ export function SiteFooter() {
           </div>
           <div>
             <p className="footer-label">Contact</p>
-            {whatsappUrl ? (
-              <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                <MessageCircle size={16} /> WhatsApp <ArrowUpRight size={14} />
-              </a>
-            ) : (
-              <span><MessageCircle size={16} /> Number pending</span>
-            )}
+            <a href={whatsappUrl} target="_blank" rel="noreferrer">
+              <MessageCircle size={16} /> WhatsApp <ArrowUpRight size={14} />
+            </a>
             <span><MapPin size={16} /> {siteConfig.location}</span>
           </div>
         </div>

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
+import { FloatingWhatsApp } from "@/components/floating-whatsapp";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -35,13 +36,33 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: siteConfig.url,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Surat",
+      addressRegion: "Gujarat",
+      addressCountry: "IN",
+    },
+  };
+
   return (
     <html lang="en">
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
         <a className="skip-link" href="#main-content">Skip to content</a>
         <SiteHeader />
         <main id="main-content">{children}</main>
         <SiteFooter />
+        <FloatingWhatsApp />
         <ServiceWorkerRegistration />
       </body>
     </html>

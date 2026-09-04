@@ -5,9 +5,11 @@ import {
   Check,
   Droplets,
   Gauge,
+  MapPin,
   Maximize2,
   MessageCircle,
   Search,
+  Waves,
   Zap,
 } from "lucide-react";
 import { CoolerVisual } from "@/components/cooler-visual";
@@ -52,7 +54,12 @@ export default function HomePage() {
         <div className="hero-watermark" aria-hidden="true">COOL</div>
         <div className="container hero-grid">
           <div className="hero-copy">
-            <p className="eyebrow hero-eyebrow"><span /> Tirupati Coolers, Surat</p>
+            <p className="hero-eyebrow">
+              <span className="hero-eyebrow-mark" aria-hidden="true"><Waves size={15} /></span>
+              <span className="hero-eyebrow-name">Tirupati Coolers</span>
+              <span className="hero-eyebrow-divider" aria-hidden="true" />
+              <span className="hero-location"><MapPin size={13} aria-hidden="true" /> Surat, Gujarat</span>
+            </p>
             <h1>Find the right cooler for your space.</h1>
             <p className="hero-description">
               Explore a clear, easy-to-use catalogue and send your product enquiry directly on WhatsApp.
@@ -72,7 +79,7 @@ export default function HomePage() {
           <div className="hero-product">
             <div className="hero-orbit orbit-one" aria-hidden="true" />
             <div className="hero-orbit orbit-two" aria-hidden="true" />
-            <CoolerVisual tone="ocean" />
+            <CoolerVisual visualId="home-hero" tone="ocean" />
             <div className="hero-note note-top">
               <span className="note-dot" />
               <p><strong>Catalogue preview</strong>Details are being finalized</p>

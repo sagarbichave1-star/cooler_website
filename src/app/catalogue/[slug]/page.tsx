@@ -27,9 +27,18 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     description: product.summary,
     alternates: { canonical: `/catalogue/${product.slug}` },
     openGraph: {
+      type: "website",
+      siteName: siteConfig.name,
       title: `${product.name} | Tirupati Coolers`,
       description: product.summary,
       url: `/catalogue/${product.slug}`,
+      images: ["/opengraph-image"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} | Tirupati Coolers`,
+      description: product.summary,
+      images: ["/opengraph-image"],
     },
   };
 }
@@ -41,9 +50,24 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const productUrl = `${siteConfig.url}/catalogue/${product.slug}`;
   const related = products.filter((item) => item.slug !== product.slug).slice(0, 3);
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteConfig.url },
+      { "@type": "ListItem", position: 2, name: "Catalogue", item: `${siteConfig.url}/catalogue` },
+      { "@type": "ListItem", position: 3, name: product.name, item: productUrl },
+    ],
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <section className="product-detail-section">
         <div className="container">
           <nav className="breadcrumbs" aria-label="Breadcrumb">
@@ -57,7 +81,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="product-detail-grid">
             <div className="product-detail-visual">
               <span className="visual-label">Catalogue preview</span>
-              <CoolerVisual tone={product.tone} />
+              <CoolerVisual visualId={`detail-${product.slug}`} tone={product.tone} />
             </div>
             <div className="product-detail-copy">
               <p className="eyebrow">{product.category} series</p>

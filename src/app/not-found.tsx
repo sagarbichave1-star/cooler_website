@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Search } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Page Not Found",
+  description: "The requested Tirupati Coolers page could not be found.",
+  alternates: {},
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
   return (
