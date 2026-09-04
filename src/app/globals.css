@@ -1009,9 +1009,12 @@ footer[id] {
 
 /* Product details */
 .product-dialog {
+  position: fixed;
+  inset: 0;
   width: min(960px, calc(100% - 2rem));
   max-width: none;
   max-height: min(760px, calc(100dvh - 2rem));
+  margin: auto;
   overflow: auto;
   border: 0;
   border-radius: var(--radius);

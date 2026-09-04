@@ -2,6 +2,7 @@ type ActiveScroll = {
   frame: number;
   root: HTMLElement;
   previousBehavior: string;
+  cleanup: () => void;
 };
 
 let activeScroll: ActiveScroll | null = null;
@@ -11,7 +12,19 @@ function stopActiveScroll() {
 
   cancelAnimationFrame(activeScroll.frame);
   activeScroll.root.style.scrollBehavior = activeScroll.previousBehavior;
+  activeScroll.cleanup();
   activeScroll = null;
+}
+
+export function smoothScrollDuration(distance: number) {
+  return Math.min(1250, Math.max(520, 400 + Math.abs(distance) * 0.14));
+}
+
+export function smoothScrollEasing(progress: number) {
+  const clampedProgress = Math.min(Math.max(progress, 0), 1);
+  return clampedProgress < 0.5
+    ? 4 * clampedProgress ** 3
+    : 1 - Math.pow(-2 * clampedProgress + 2, 3) / 2;
 }
 
 export function smoothScrollTo(targetTop: number) {
@@ -34,27 +47,43 @@ export function smoothScrollTo(targetTop: number) {
   }
 
   const startedAt = performance.now();
-  const duration = Math.min(760, Math.max(420, Math.abs(distance) * 0.48));
+  const duration = smoothScrollDuration(distance);
+  const interruptionEvents = ["wheel", "touchstart", "pointerdown"] as const;
+  const stopForUserInput = () => stopActiveScroll();
+  const cleanup = () => {
+    interruptionEvents.forEach((eventName) => {
+      window.removeEventListener(eventName, stopForUserInput);
+    });
+  };
+
+  interruptionEvents.forEach((eventName) => {
+    window.addEventListener(eventName, stopForUserInput, { passive: true, once: true });
+  });
+
+  const scroll: ActiveScroll = {
+    frame: 0,
+    root,
+    previousBehavior,
+    cleanup,
+  };
 
   function animate(now: number) {
     const progress = Math.min((now - startedAt) / duration, 1);
-    const easedProgress = 1 - Math.pow(1 - progress, 4);
+    const easedProgress = smoothScrollEasing(progress);
     window.scrollTo(0, start + distance * easedProgress);
 
-    if (progress < 1 && activeScroll) {
-      activeScroll.frame = requestAnimationFrame(animate);
+    if (progress < 1 && activeScroll === scroll) {
+      scroll.frame = requestAnimationFrame(animate);
       return;
     }
 
     root.style.scrollBehavior = previousBehavior;
-    activeScroll = null;
+    cleanup();
+    if (activeScroll === scroll) activeScroll = null;
   }
 
-  activeScroll = {
-    frame: requestAnimationFrame(animate),
-    root,
-    previousBehavior,
-  };
+  scroll.frame = requestAnimationFrame(animate);
+  activeScroll = scroll;
 }
 
 export function smoothScrollToElement(element: HTMLElement) {

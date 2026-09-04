@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { filterProducts } from "@/data/products";
 import { buildWhatsAppUrl, productEnquiryMessage } from "@/lib/whatsapp";
 import { normalizeGooglePlaceReviews } from "@/lib/google-reviews";
+import { smoothScrollDuration, smoothScrollEasing } from "@/lib/smooth-scroll";
 
 describe("catalogue search", () => {
   it("finds a product by its intended use", () => {
@@ -60,5 +61,20 @@ describe("Google review normalization", () => {
 
   it("handles an empty response without inventing reviews", () => {
     expect(normalizeGooglePlaceReviews({}).reviews).toEqual([]);
+  });
+});
+
+describe("smooth scrolling", () => {
+  it("uses a longer duration for long page journeys without becoming excessive", () => {
+    expect(smoothScrollDuration(200)).toBe(520);
+    expect(smoothScrollDuration(4000)).toBe(960);
+    expect(smoothScrollDuration(10000)).toBe(1250);
+  });
+
+  it("eases gently at both ends of the movement", () => {
+    expect(smoothScrollEasing(0)).toBe(0);
+    expect(smoothScrollEasing(0.5)).toBe(0.5);
+    expect(smoothScrollEasing(1)).toBe(1);
+    expect(smoothScrollEasing(0.1)).toBeLessThan(0.01);
   });
 });

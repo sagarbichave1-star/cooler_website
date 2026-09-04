@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { FloatingWhatsApp } from "@/components/floating-whatsapp";
 import { ScrollToTop } from "@/components/scroll-to-top";
+import { SmoothAnchorLinks } from "@/components/smooth-anchor-links";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <SiteFooter />
         <ScrollToTop />
         <FloatingWhatsApp />
+        <SmoothAnchorLinks />
         <ServiceWorkerRegistration />
       </body>
     </html>
