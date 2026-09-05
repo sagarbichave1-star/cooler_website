@@ -124,13 +124,6 @@
 .admin-login-form > .button {
   width: 100%;
 }
-.admin-setup-note {
-  border-left: 2px solid var(--ocean);
-  background: var(--ice);
-  padding: 1rem;
-  font-size: 0.8rem;
-  overflow-wrap: anywhere;
-}
 .form-error {
   padding: 0.9rem 1rem;
   border: 1px solid #e7b8b8;

@@ -6,9 +6,9 @@ import {
   validAdminSession,
 } from "./admin-token";
 import { enquiryInput, productInput } from "./admin-validation";
-import { readFormJson, throttle } from "./request-guards";
+import { formFailure, readFormJson, throttle } from "./request-guards";
 
-afterEach(() => vi.unstubAllEnvs());
+afterEach(() => { vi.unstubAllEnvs(); vi.useRealTimers(); });
 function configureAdmin() {
   vi.stubEnv("ADMIN_ACCESS_KEY", "test-access-key-with-at-least-32-characters");
   vi.stubEnv(
@@ -62,6 +62,10 @@ describe("enquiry and product boundaries", () => {
       enquiryInput({ ...enquiry, message: "a".repeat(3001) }),
     ).toThrow();
     expect(() => enquiryInput({ ...enquiry, phone: "hello" })).toThrow();
+    expect(() => enquiryInput({ ...enquiry, phone: "1".repeat(16) })).toThrow();
+    expect(enquiryInput({ ...enquiry, email: "customer@example.co.in" }).email).toBe("customer@example.co.in");
+    for (const email of ["a@b..com", "a@b.", "a".repeat(201), "a@" + ".".repeat(190)])
+      expect(() => enquiryInput({ ...enquiry, email })).toThrow();
   });
   it("rejects executable image URLs and invalid product IDs", () => {
     const product = {
@@ -101,7 +105,53 @@ describe("request protection", () => {
     );
   });
   it("limits repeated attempts without trusting forwarded IP headers", () => {
-    throttle("test-only-bucket", 1);
-    expect(() => throttle("test-only-bucket", 1)).toThrow("Too many");
+    vi.useFakeTimers();
+    throttle("admin-login", 1);
+    try { throttle("admin-login", 1); } catch (error) {
+      const response = formFailure(error);
+      expect(response.status).toBe(429);
+      expect(response.headers.get("Retry-After")).toBe("900");
+    }
+    expect(() => throttle("admin-login", 1)).toThrow("Too many");
+    vi.advanceTimersByTime(900000);
+    expect(() => throttle("admin-login", 1)).not.toThrow();
+  });
+  it("rejects lookalike content types and missing production origins", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
+    vi.stubEnv("NODE_ENV", "production");
+    const request = () => new Request("https://coolers.test/api/enquiries", {
+      method: "POST", body: "{}", headers: { origin: "https://coolers.test", "Content-Type": "application/json-invalid" },
+    });
+    await expect(readFormJson(request())).rejects.toMatchObject({ status: 503 });
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://coolers.test");
+    await expect(readFormJson(request())).rejects.toMatchObject({ status: 415 });
+  });
+  it("bounds streamed uploads even with a false Content-Length", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://coolers.test");
+    const request = new Request("https://coolers.test/api/enquiries", {
+      method: "POST", headers: { origin: "https://coolers.test", "Content-Type": "application/json", "Content-Length": "1" },
+      body: new ReadableStream({ start(controller) {
+        controller.enqueue(new Uint8Array(8192));
+        controller.enqueue(new Uint8Array(8193));
+        controller.close();
+      } }), duplex: "half",
+    } as RequestInit);
+    await expect(readFormJson(request)).rejects.toMatchObject({ status: 413 });
+    expect(request.body?.locked).toBe(false);
+  });
+  it("cancels stalled uploads and releases the reader", async () => {
+    vi.useFakeTimers();
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://coolers.test");
+    const cancel = vi.fn();
+    const request = new Request("https://coolers.test/api/enquiries", {
+      method: "POST", headers: { origin: "https://coolers.test", "Content-Type": "application/json" },
+      body: new ReadableStream({ cancel }), duplex: "half",
+    } as RequestInit);
+    const assertion = expect(readFormJson(request)).rejects.toMatchObject({ status: 408 });
+    await vi.advanceTimersByTimeAsync(10000);
+    await assertion;
+    expect(cancel).toHaveBeenCalledOnce();
+    expect(request.body?.locked).toBe(false);
+    expect(vi.getTimerCount()).toBe(0);
   });
 });
