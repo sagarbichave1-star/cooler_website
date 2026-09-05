@@ -14,6 +14,7 @@ export type Product = {
   powerConsumption?: string;
   dimensions?: string;
   features?: string[];
+  imageUrl?: string;
 };
 
 export const products: Product[] = [
@@ -54,16 +55,10 @@ export const products: Product[] = [
   },
 ];
 
-export const productCategories = ["All", ...new Set(products.map((product) => product.category))];
-
-export function getProductBySlug(slug: string) {
-  return products.find((product) => product.slug === slug);
-}
-
-export function filterProducts(query: string, category = "All") {
+export function filterProducts(query: string, category = "All", catalogue = products) {
   const normalizedQuery = query.trim().toLocaleLowerCase();
 
-  return products.filter((product) => {
+  return catalogue.filter((product) => {
     const matchesCategory = category === "All" || product.category === category;
     const searchableText = [
       product.name,

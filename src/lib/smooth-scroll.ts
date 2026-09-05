@@ -48,7 +48,7 @@ export function smoothScrollTo(targetTop: number) {
 
   const startedAt = performance.now();
   const duration = smoothScrollDuration(distance);
-  const interruptionEvents = ["wheel", "touchstart", "pointerdown"] as const;
+  const interruptionEvents = ["wheel", "touchstart", "pointerdown", "keydown"] as const;
   const stopForUserInput = () => stopActiveScroll();
   const cleanup = () => {
     interruptionEvents.forEach((eventName) => {

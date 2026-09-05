@@ -5,8 +5,11 @@ import { ServiceWorkerRegistration } from "@/components/service-worker-registrat
 import { FloatingWhatsApp } from "@/components/floating-whatsapp";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { SmoothAnchorLinks } from "@/components/smooth-anchor-links";
+import { PublicChrome } from "@/components/public-chrome";
+import { PrivacyProvider } from "@/components/privacy-controls";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
+import "./admin-ui.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -37,7 +40,9 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -54,20 +59,31 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
-          }}
-        />
-        <a className="skip-link" href="#main-content">Skip to content</a>
-        <SiteHeader />
-        <main id="main-content">{children}</main>
-        <SiteFooter />
-        <ScrollToTop />
-        <FloatingWhatsApp />
-        <SmoothAnchorLinks />
-        <ServiceWorkerRegistration />
+        <PrivacyProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(organizationJsonLd).replace(
+                /</g,
+                "\\u003c",
+              ),
+            }}
+          />
+          <a className="skip-link" href="#main-content">
+            Skip to content
+          </a>
+          <PublicChrome>
+            <SiteHeader />
+          </PublicChrome>
+          <main id="main-content">{children}</main>
+          <PublicChrome>
+            <SiteFooter />
+            <ScrollToTop />
+            <FloatingWhatsApp />
+          </PublicChrome>
+          <SmoothAnchorLinks />
+          <ServiceWorkerRegistration />
+        </PrivacyProvider>
       </body>
     </html>
   );

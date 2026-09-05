@@ -1,5 +1,5 @@
 const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "";
-const configuredWhatsAppNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
+const configuredWhatsAppNumber = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "919033148505").replace(/\D/g, "");
 const configuredMapUrl = process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL?.trim() || "";
 const configuredMapQuery = process.env.NEXT_PUBLIC_GOOGLE_MAPS_QUERY?.trim() || "Surat, Gujarat, India";
 const configuredMapEmbedKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY?.trim() || "";
@@ -10,6 +10,8 @@ export const siteConfig = {
   description:
     "Explore the Tirupati Coolers catalogue and enquire about a product directly on WhatsApp.",
   location: "Surat, Gujarat, India",
+  phone: "+91 90331 48505",
+  phoneHref: "tel:+919033148505",
   mapUrl: configuredMapUrl || "https://www.google.com/maps/search/?api=1&query=Surat%2C%20Gujarat%2C%20India",
   mapEmbedUrl: configuredMapEmbedKey
     ? `https://www.google.com/maps/embed/v1/place?key=${configuredMapEmbedKey}&q=${encodeURIComponent(configuredMapQuery)}`

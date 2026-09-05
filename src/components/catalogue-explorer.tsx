@@ -5,15 +5,31 @@ import { RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
 import { CoolerVisual } from "@/components/cooler-visual";
 import { ProductCard } from "@/components/product-card";
 import { WhatsAppLink } from "@/components/whatsapp-link";
-import { filterProducts, productCategories, type Product } from "@/data/products";
+import { filterProducts, products, type Product } from "@/data/products";
+import { loadCatalogue } from "@/lib/catalogue";
 
 export function CatalogueExplorer() {
+  const [catalogue, setCatalogue] = useState(products);
+  const [state, setState] = useState<"loading" | "ready" | "fallback">("loading");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const results = useMemo(() => filterProducts(query, category), [query, category]);
+  const results = useMemo(() => filterProducts(query, category, catalogue), [query, category, catalogue]);
+  const productCategories = ["All", ...new Set(catalogue.map((product) => product.category))];
   const hasFilters = Boolean(query.trim()) || category !== "All";
+
+  useEffect(() => {
+    const controller = new AbortController();
+    loadCatalogue(controller.signal).then((result) => {
+      if (controller.signal.aborted) return;
+      setCatalogue(result.products);
+      setState(result.fallback ? "fallback" : "ready");
+      setCategory("All");
+      setSelectedProduct(null);
+    }).catch(() => { /* Unmounted: leave the cancelled request alone. */ });
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -61,7 +77,10 @@ export function CatalogueExplorer() {
       </div>
 
       <div className="catalogue-results-header" aria-live="polite">
-        <p>{results.length} {results.length === 1 ? "product category" : "product categories"}</p>
+        <p>{results.length} {results.length === 1 ? "product" : "products"}
+          {state === "loading" && " · Checking the latest catalogue"}
+          {state === "fallback" && " · Showing range previews. Confirm availability on WhatsApp."}
+        </p>
         {hasFilters && (
           <button type="button" onClick={clearFilters}>
             <RotateCcw size={15} /> Clear filters
@@ -78,9 +97,9 @@ export function CatalogueExplorer() {
       ) : (
         <div className="empty-state">
           <Search size={28} aria-hidden="true" />
-          <h3>No matching products</h3>
-          <p>Try another name or remove the current category filter.</p>
-          <button className="button" type="button" onClick={clearFilters}>Reset catalogue</button>
+          <h3>{catalogue.length ? "No matching products" : "The catalogue is being updated"}</h3>
+          <p>{catalogue.length ? "Try another name or remove the current category filter." : "Please enquire on WhatsApp for the current range."}</p>
+          {hasFilters && <button className="button" type="button" onClick={clearFilters}>Reset catalogue</button>}
         </div>
       )}
 
@@ -108,7 +127,12 @@ export function CatalogueExplorer() {
               <p>{selectedProduct.summary}</p>
               <dl>
                 <div><dt>Suggested setting</dt><dd>{selectedProduct.intendedFor}</dd></div>
-                <div><dt>Specifications</dt><dd>Awaiting verified product data</dd></div>
+                {selectedProduct.model && <div><dt>Model</dt><dd>{selectedProduct.model}</dd></div>}
+                {selectedProduct.tankCapacity && <div><dt>Tank capacity</dt><dd>{selectedProduct.tankCapacity}</dd></div>}
+                {selectedProduct.coolingArea && <div><dt>Cooling area</dt><dd>{selectedProduct.coolingArea}</dd></div>}
+                {selectedProduct.powerConsumption && <div><dt>Power</dt><dd>{selectedProduct.powerConsumption}</dd></div>}
+                {selectedProduct.dimensions && <div><dt>Dimensions</dt><dd>{selectedProduct.dimensions}</dd></div>}
+                {!selectedProduct.model && !selectedProduct.tankCapacity && !selectedProduct.coolingArea && !selectedProduct.powerConsumption && !selectedProduct.dimensions && <div><dt>Specifications</dt><dd>Awaiting verified product data</dd></div>}
               </dl>
               <WhatsAppLink
                 productName={selectedProduct.name}

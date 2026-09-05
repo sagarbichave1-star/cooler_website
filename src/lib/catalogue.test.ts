@@ -31,8 +31,8 @@ describe("WhatsApp enquiry copy", () => {
     expect(message).toContain("https://example.com/catalogue/tower-cooler");
   });
 
-  it("creates a number-free WhatsApp share link before a number is configured", () => {
-    expect(buildWhatsAppUrl("Hello")).toBe("https://wa.me/?text=Hello");
+  it("creates a direct WhatsApp enquiry using the configured company number", () => {
+    expect(buildWhatsAppUrl("Hello")).toBe("https://wa.me/919033148505?text=Hello");
   });
 });
 

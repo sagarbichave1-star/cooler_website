@@ -1,6 +1,6 @@
 "use client";
 
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
 import { Menu, Search, X } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { WhatsAppIcon } from "@/components/brand-icons";
@@ -13,16 +13,6 @@ export function SiteHeader() {
   const whatsappUrl = buildWhatsAppUrl(
     "Hello Tirupati Coolers, I would like help choosing a cooler.",
   );
-
-  function followSection(event: MouseEvent<HTMLAnchorElement>, href: string) {
-    const target = document.querySelector<HTMLElement>(href);
-    if (!target) return;
-
-    event.preventDefault();
-    setMenuOpen(false);
-    window.history.replaceState(null, "", href);
-    smoothScrollToElement(target);
-  }
 
   function focusCatalogueSearch() {
     const target = document.getElementById("catalogue");
@@ -46,7 +36,7 @@ export function SiteHeader() {
               key={item.label}
               href={item.href}
               className="nav-link"
-              onClick={(event) => followSection(event, item.href)}
+              onClick={() => setMenuOpen(false)}
             >
               {item.label}
             </a>
@@ -79,10 +69,10 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <div className={menuOpen ? "mobile-menu is-open" : "mobile-menu"} aria-hidden={!menuOpen}>
+      <div className={menuOpen ? "mobile-menu is-open" : "mobile-menu"} inert={!menuOpen}>
         <nav className="container mobile-nav" aria-label="Mobile navigation">
           {siteConfig.navigation.map((item, index) => (
-            <a key={item.label} href={item.href} onClick={(event) => followSection(event, item.href)}>
+            <a key={item.label} href={item.href} onClick={() => setMenuOpen(false)}>
               <span>0{index + 1}</span>
               {item.label}
             </a>

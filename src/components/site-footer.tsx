@@ -3,6 +3,9 @@ import { Brand } from "@/components/brand";
 import { WhatsAppIcon } from "@/components/brand-icons";
 import { siteConfig } from "@/config/site";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { ContactForm } from "./contact-form";
+import { ContactMap } from "./contact-map";
+import { PrivacySettingsButton } from "./privacy-controls";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -19,37 +22,49 @@ export function SiteFooter() {
               <p className="eyebrow light">Contact</p>
               <h2 id="contact-heading">Get in touch.</h2>
             </div>
-            <p>Tell us which cooler category you are considering and we will continue the conversation on WhatsApp.</p>
+            <p>
+              Tell us which cooler category you are considering and we will
+              continue the conversation on WhatsApp.
+            </p>
           </div>
 
           <div className="contact-grid">
             <div className="contact-details">
               <article>
-                <span className="contact-icon"><MapPin size={19} /></span>
-                <div><p>Registered location</p><strong>{siteConfig.location}</strong><small>Exact address awaiting verification</small></div>
+                <span className="contact-icon">
+                  <MapPin size={19} />
+                </span>
+                <div>
+                  <p>Registered location</p>
+                  <strong>{siteConfig.location}</strong>
+                  <small>Exact address awaiting verification</small>
+                </div>
               </article>
               <article>
-                <span className="contact-icon"><WhatsAppIcon width={19} height={19} /></span>
-                <div><p>Product enquiries</p><a href={whatsappUrl} target="_blank" rel="noreferrer">WhatsApp Tirupati Coolers <ArrowUpRight size={15} /></a><small>Company number can be added before launch</small></div>
+                <span className="contact-icon">
+                  <WhatsAppIcon width={19} height={19} />
+                </span>
+                <div>
+                  <p>Product enquiries</p>
+                  <a href={siteConfig.phoneHref}>{siteConfig.phone}</a>
+                  <a href={whatsappUrl} target="_blank" rel="noreferrer">
+                    WhatsApp Tirupati Coolers <ArrowUpRight size={15} />
+                  </a>
+                </div>
               </article>
-              <a className="button button-light" href={whatsappUrl} target="_blank" rel="noreferrer">
+              <a
+                className="button button-light"
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <WhatsAppIcon width={18} height={18} /> Start an enquiry
               </a>
             </div>
 
-            <div className="map-frame">
-              <iframe
-                title="Map showing Tirupati Coolers in Surat, Gujarat"
-                src={siteConfig.mapEmbedUrl}
-                width="760"
-                height="440"
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
-              <a href={siteConfig.mapUrl} target="_blank" rel="noreferrer">Open in Google Maps <ArrowUpRight size={15} /></a>
-            </div>
+            <ContactMap />
           </div>
+          <ContactForm />
         </div>
       </section>
 
@@ -57,6 +72,7 @@ export function SiteFooter() {
         <div className="container footer-bottom">
           <Brand />
           <p>&copy; {year} Tirupati Coolers</p>
+          <PrivacySettingsButton />
           <a href="#home">Back to top</a>
         </div>
       </div>

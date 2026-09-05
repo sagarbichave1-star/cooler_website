@@ -32,6 +32,8 @@ Open `http://localhost:3000`.
 
 ## Environment configuration
 
+The new `/admin` workspace uses a single access key. Product changes are UI previews only while database integration is paused. MongoDB is selected for the next phase. The contact form validates input and offers WhatsApp until storage is connected. See [admin setup and scope](docs/ADMIN.md) for login configuration and the remaining database work.
+
 Copy `.env.example` to `.env.local` and add the available business configuration:
 
 ```env
