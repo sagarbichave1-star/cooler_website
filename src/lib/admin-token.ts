@@ -9,6 +9,8 @@ const SESSION_LIFETIME = 60 * 60 * 4;
 export const adminCookie = "trimurti-admin-session";
 
 function credentials() {
+  // Refuse incomplete or accidentally duplicated credentials rather than
+  // creating a predictably signed admin session in a misconfigured deployment.
   const key = process.env.ADMIN_ACCESS_KEY || "";
   const secret = process.env.ADMIN_SESSION_SECRET || "";
   return key.length >= 32 &&
@@ -26,6 +28,8 @@ export function adminConfigured() {
 export function validAccessKey(input: string) {
   const config = credentials();
   if (!config || input.length > 256) return false;
+  // Hash both values to a fixed size before comparison; this keeps the timing
+  // comparison safe even when a submitted key has a different length.
   return timingSafeEqual(
     createHash("sha256").update(input).digest(),
     createHash("sha256").update(config.key).digest(),
@@ -58,6 +62,8 @@ export function validAdminSession(token: string | undefined, now = Date.now()) {
   const expiry = Number(parts[0]);
   const current = Math.floor(now / 1000);
   if (expiry <= current || expiry > current + SESSION_LIFETIME) return false;
+  // Verify the signed expiry and nonce as one payload. A token cannot be
+  // extended by changing only its visible expiry field.
   const expected = Buffer.from(sign(`${parts[0]}.${parts[1]}`));
   const signature = Buffer.from(parts[2]);
   return (

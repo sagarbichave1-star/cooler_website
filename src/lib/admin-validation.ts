@@ -28,6 +28,8 @@ export function productInput(value: unknown): {
   published: boolean;
   data: Product;
 } {
+  // Validate at the API boundary before data reaches MongoDB. UI validation is
+  // helpful, but it is not a trust boundary.
   const input = record(value);
   const slug = field(input, "slug", 80);
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))

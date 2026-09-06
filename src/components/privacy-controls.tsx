@@ -10,6 +10,8 @@ import {
 import { ShieldCheck } from "lucide-react";
 
 type Preference = "essential" | "external" | null;
+// Version the key whenever consent meanings change; old choices must not be
+// silently repurposed for a new data-processing purpose.
 const STORAGE_KEY = "trimurti-privacy-v2";
 const EVENT = "trimurti-privacy-change";
 const PreferenceContext = createContext<{
@@ -88,6 +90,8 @@ export function PrivacyProvider({ children }: { children: ReactNode }) {
     } catch {
       /* Preferences still work for this visit when storage is blocked. */
     }
+    // Update Consent Mode before notifying mounted integrations, so a newly
+    // rendered analytics tag observes the visitor's latest choice immediately.
     updateGoogleConsent(preference === "external" ? "granted" : "denied");
     window.dispatchEvent(new Event(EVENT));
     setSettingsOpen(false);

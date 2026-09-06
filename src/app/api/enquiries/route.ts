@@ -8,6 +8,8 @@ import {
 
 export async function POST(request: Request) {
   try {
+    // This route intentionally validates but does not persist enquiries until
+    // a real, consent-aware CRM adapter is approved and connected.
     throttle("contact-preview", 60);
     const input = record(await readFormJson(request));
     if (field(input, "website", 200, false))

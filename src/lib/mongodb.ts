@@ -2,6 +2,8 @@ import "server-only";
 import { MongoClient, ServerApiVersion } from "mongodb";
 
 declare global {
+  // Next development can re-evaluate modules during hot reload. Reuse the
+  // pending connection there to avoid creating a new Mongo client each time.
   var trimurtiMongo: Promise<MongoClient> | undefined;
 }
 

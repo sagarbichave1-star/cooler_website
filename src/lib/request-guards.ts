@@ -11,6 +11,8 @@ export class RequestError extends Error {
 }
 
 export async function readFormJson(request: Request): Promise<unknown> {
+  // Browser-originated state changes are same-origin only. API routes do not
+  // accept arbitrary form posts just because they contain valid JSON.
   const origin = request.headers.get("origin");
   const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL;
   if (!configuredOrigin && process.env.NODE_ENV === "production")
@@ -23,6 +25,8 @@ export async function readFormJson(request: Request): Promise<unknown> {
     "application/json"
   )
     throw new RequestError(415, "Send JSON form data.");
+  // Cap streamed input as well as Content-Length: a sender can omit or forge
+  // the header while still attempting to consume server memory.
   const maximumBytes = 16384;
   if (Number(request.headers.get("content-length")) > maximumBytes)
     throw new RequestError(413, "Form data is too large.");

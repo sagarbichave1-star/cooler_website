@@ -18,8 +18,9 @@ type CuratedReview = {
   text: string;
 };
 
-// Temporary no-billing fallback. These are concise paraphrases of selected
-// five-star comments observed on the verified Google listing on 2026-09-06.
+// No-billing fallback. These are concise paraphrases of selected five-star
+// comments observed on the verified Google listing on 2026-09-06. Replace
+// them only with attributable, permission-safe content; do not invent reviews.
 const curatedReviews: CuratedReview[] = [
   {
     id: "dhanashri-kakade",
@@ -129,6 +130,8 @@ function CuratedReviews() {
 
 export function GoogleReviews() {
   const { external } = usePrivacy();
+  // Live Google content is optional. A consent refusal retains a complete,
+  // static section rather than leaving a visible gap in the one-page layout.
   if (!external) return <CuratedReviews />;
   return <EnabledGoogleReviews />;
 }
@@ -146,6 +149,8 @@ function EnabledGoogleReviews() {
 
     async function loadReviews() {
       try {
+        // The browser calls only our route. The paid Places key remains on the
+        // server, where rate limiting and response normalisation are enforced.
         const response = await fetch("/api/google-reviews", {
           signal: controller.signal,
         });

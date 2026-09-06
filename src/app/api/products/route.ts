@@ -4,6 +4,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
+    // Cache successful public reads briefly at the edge, while never caching a
+    // failure that could hide a recovered catalogue after an outage.
     return Response.json(
       { products: await listPublicProducts(), source: "database" },
       {

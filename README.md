@@ -102,6 +102,8 @@ The project includes:
 
 See [SEO and analytics setup](docs/SEO_AND_ANALYTICS_SETUP.md) for the launch sequence, Google account actions and content rules. See [brand notes](docs/BRAND_GUIDELINES.md) for the locked customer-facing identity and visual direction.
 
+For the boundaries between the public page, product data, consent, Google services and deployment, see the [architecture and maintenance guide](docs/ARCHITECTURE.md).
+
 ## Offline behaviour
 
 The service worker is registered only in production. It never caches admin pages or API responses, so catalogue publication changes are not trapped behind an offline cache.

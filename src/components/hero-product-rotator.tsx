@@ -15,6 +15,8 @@ export function HeroProductRotator({ products }: HeroProductRotatorProps) {
   const [motionAllowed, setMotionAllowed] = useState(true);
 
   useEffect(() => {
+    // Respect an operating-system motion preference instead of offering a
+    // second, inconsistent local setting for decorative hero motion.
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updateMotionPreference = () => setMotionAllowed(!mediaQuery.matches);
 
@@ -24,6 +26,8 @@ export function HeroProductRotator({ products }: HeroProductRotatorProps) {
   }, []);
 
   useEffect(() => {
+    // Decode later hero images before their first frame so CSS cross-fades do
+    // not reveal an empty image while the next product loads.
     products.forEach((product) => {
       if (!product.imageUrl) return;
       const image = new window.Image();
@@ -32,6 +36,8 @@ export function HeroProductRotator({ products }: HeroProductRotatorProps) {
   }, [products]);
 
   useEffect(() => {
+    // Only one interval is active for a given product list; changing the list
+    // safely restarts rotation with the current number of frames.
     if (!motionAllowed || products.length < 2) return;
 
     const interval = window.setInterval(() => {

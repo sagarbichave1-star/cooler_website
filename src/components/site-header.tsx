@@ -10,6 +10,8 @@ export function SiteHeader() {
   const [activeHref, setActiveHref] = useState("#about");
 
   useEffect(() => {
+    // The hero maps to About intentionally: About is the first explanatory
+    // destination in the primary navigation, while Home has no separate link.
     const sectionLinks = [
       { id: "home", href: "#about" },
       { id: "about", href: "#about" },
@@ -20,6 +22,8 @@ export function SiteHeader() {
     ];
 
     function updateActiveSection() {
+      // Use a viewport marker rather than the exact top edge to avoid nav
+      // flicker when two long adjacent sections share the screen.
       const scrollMarker = window.scrollY + window.innerHeight * 0.36;
       let active = "#about";
 

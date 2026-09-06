@@ -24,6 +24,8 @@ const coverageAreaOptions = [
 ] as const;
 
 function coverageBandFor(coolingArea?: string) {
+  // Coverage is a published model attribute. Never infer it from tank size,
+  // fan size or airflow because those are not equivalent to room suitability.
   const area = Number.parseInt(coolingArea || "", 10);
   if (!area) return undefined;
   if (area <= 200) return "Up to 200 sq ft";
@@ -49,6 +51,8 @@ export function CatalogueExplorer() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const results = useMemo(() => {
+    // Keep every filter derived from the currently loaded catalogue. Admin
+    // changes can therefore alter available choices without a UI code release.
     const filtered = filterProducts(query, category, catalogue).filter(
       (product) => {
         const hasTank =
@@ -136,6 +140,8 @@ export function CatalogueExplorer() {
     loadCatalogue(controller.signal)
       .then((result) => {
         if (controller.signal.aborted) return;
+        // The bundled catalogue is a resilience fallback, not a second source
+        // of product truth. The status text makes that distinction visible.
         setCatalogue(result.products);
         setState(result.fallback ? "fallback" : "ready");
         setCategory("All");
@@ -155,6 +161,8 @@ export function CatalogueExplorer() {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
+    // Native dialog semantics provide keyboard trapping and Escape handling
+    // without recreating a fragile modal implementation.
     if (selectedProduct && !dialog.open) dialog.showModal();
     if (!selectedProduct && dialog.open) dialog.close();
   }, [selectedProduct]);

@@ -8,6 +8,8 @@ const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 export function ConsentAwareGoogleAnalytics() {
   const { external } = usePrivacy();
 
+  // Never render the Google script until the visitor has made the optional
+  // choice. The default denied state is installed in the server layout first.
   if (!external || !measurementId) return null;
   const safeMeasurementId = JSON.stringify(measurementId);
 

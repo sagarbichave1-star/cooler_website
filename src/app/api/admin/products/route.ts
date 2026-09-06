@@ -17,6 +17,8 @@ import {
 export const dynamic = "force-dynamic";
 
 async function authorize() {
+  // Keep authorization centralised so each mutation path fails closed when the
+  // signed admin cookie is absent or expired.
   if (!(await isAdmin()))
     throw new RequestError(401, "Your admin session has expired.");
 }

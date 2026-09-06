@@ -10,6 +10,8 @@ export type StoredProduct = Product & {
 };
 
 export const productCollectionValidator: Document = {
+  // Database validation mirrors the API validation. Keeping this defence at
+  // the collection boundary prevents malformed writes from any future client.
   $jsonSchema: {
     bsonType: "object",
     required: [
@@ -72,6 +74,8 @@ export const productCollectionValidator: Document = {
 let setup: Promise<Collection<StoredProduct>> | undefined;
 
 async function productsCollection() {
+  // Share one setup promise so concurrent first requests cannot race to create
+  // the collection, seed records or indexes. Clear it after a failed setup.
   if (!setup)
     setup = setupCollection().catch((error) => {
       setup = undefined;
@@ -111,6 +115,8 @@ async function setupCollection() {
     { published: 1, category: 1, name: 1 },
     { name: "public_catalogue" },
   );
+  // Seed only a newly created database. Existing records are never overwritten
+  // by a deployment or restart.
   if (created && products.length) {
     const now = new Date();
     await collection.insertMany(
@@ -169,6 +175,8 @@ export async function saveProduct(
         { projection: { createdAt: 1 } },
       )
     : null;
+  // A rename keeps its original creation date, while every write receives an
+  // auditable updated timestamp used by the admin listing order.
   const document: OptionalUnlessRequiredId<StoredProduct> = {
     ...product,
     published,

@@ -2,6 +2,8 @@ import { products, type Product } from "@/data/products";
 import { productInput, record } from "./admin-validation";
 
 export function parseCatalogue(value: unknown): Product[] {
+  // Treat the public endpoint as untrusted input even though it is first-party:
+  // this protects the client fallback from malformed database/API responses.
   const items = record(value).products;
   if (!Array.isArray(items) || items.length > 100) throw new Error("Invalid catalogue.");
   const slugs = new Set<string>();
@@ -40,6 +42,8 @@ export async function loadCatalogue(signal: AbortSignal) {
     return { products: parseCatalogue(await response.json()), fallback: false };
   } catch (error) {
     if (signal.aborted) throw error;
+    // Initial seed data keeps model discovery working during a short database
+    // outage, but callers must expose that availability may have changed.
     return { products, fallback: true };
   }
 }

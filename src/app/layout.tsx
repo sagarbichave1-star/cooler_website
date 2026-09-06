@@ -14,6 +14,8 @@ import "./globals.css";
 import "./admin-ui.css";
 
 export const metadata: Metadata = {
+  // Metadata uses the same canonical host as robots and sitemap. Do not set a
+  // second URL here: search engines need one unambiguous public origin.
   metadataBase: new URL(siteConfig.url),
   title: {
     default: "Trimurti Coolers Surat | Authorised Novamax Distributor",
@@ -46,6 +48,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const organizationJsonLd = {
+    // This is business identity schema, not a product feed. Keep the physical
+    // address, phone and service claims aligned with the Google Business Profile.
     "@context": "https://schema.org",
     "@type": "Store",
     name: siteConfig.name,

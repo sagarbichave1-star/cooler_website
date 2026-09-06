@@ -4,6 +4,8 @@ import { privateReply, RequestError, throttle } from "@/lib/request-guards";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  // Places credentials stay server-only. The client receives a deliberately
+  // narrowed, sanitised summary rather than Google’s raw response.
   const apiKey = process.env.GOOGLE_PLACES_API_KEY?.trim();
   const placeId = process.env.GOOGLE_PLACE_ID?.trim();
 

@@ -14,6 +14,8 @@ import { WhatsAppLink } from "@/components/whatsapp-link";
 import { products } from "@/data/products";
 
 const selectionPoints = [
+  // Kept beside the catalogue so the selection guidance and its filters use
+  // the same vocabulary rather than becoming competing sales messages.
   {
     number: "01",
     icon: Maximize2,
@@ -41,6 +43,8 @@ const selectionPoints = [
 ];
 
 const faqItems = [
+  // These answers render visibly and are also emitted as FAQPage schema below.
+  // Change both only through this single source of truth.
   {
     question: "Is Trimurti Coolers an authorised Novamax distributor and service provider?",
     answer:
@@ -81,6 +85,7 @@ const heroProductSlugs = [
   "apex",
 ];
 const heroProducts = heroProductSlugs.flatMap((slug) => {
+  // A missing seed product must not break the homepage or create a blank frame.
   const product = products.find((item) => item.slug === slug);
   return product ? [product] : [];
 });
@@ -191,6 +196,8 @@ export default function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
+          // Escape `<` so product/content text can never terminate the script
+          // element while this JSON-LD remains parseable by search crawlers.
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
