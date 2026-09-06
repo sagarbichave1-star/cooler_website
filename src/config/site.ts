@@ -12,7 +12,7 @@ export const siteConfig = {
   name: "Trimurti Coolers",
   shortName: "Trimurti",
   description:
-    "Trimurti Coolers is an authorised Novamax distributor in Surat. Explore air-cooler models, specifications and direct WhatsApp enquiries.",
+    "Trimurti Coolers is an authorised Novamax distributor and service provider in Surat. Explore air-cooler models, specifications and direct WhatsApp enquiries.",
   location: "5 Sonal Industrial, GHB Road, near Comet Motors, Surat, Gujarat 394210",
   phone: "+91 90331 48505",
   phoneHref: "tel:+919033148505",
@@ -27,7 +27,7 @@ export const siteConfig = {
   navigation: [
     { label: "About", href: "#about" },
     { label: "Products", href: "#catalogue" },
-    { label: "Choosing a cooler", href: "#catalogue" },
+    { label: "FAQ", href: "#faq" },
     { label: "Reviews", href: "#reviews" },
     { label: "Contact", href: "#contact" },
   ],

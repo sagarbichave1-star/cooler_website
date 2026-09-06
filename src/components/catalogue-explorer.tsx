@@ -15,6 +15,23 @@ import { WhatsAppLink } from "@/components/whatsapp-link";
 import { filterProducts, products, type Product } from "@/data/products";
 import { loadCatalogue } from "@/lib/catalogue";
 
+const coverageAreaOptions = [
+  "All",
+  "Up to 200 sq ft",
+  "200 – 350 sq ft",
+  "350 – 500 sq ft",
+  "500 sq ft and above",
+] as const;
+
+function coverageBandFor(coolingArea?: string) {
+  const area = Number.parseInt(coolingArea || "", 10);
+  if (!area) return undefined;
+  if (area <= 200) return "Up to 200 sq ft";
+  if (area <= 350) return "200 – 350 sq ft";
+  if (area <= 500) return "350 – 500 sq ft";
+  return "500 sq ft and above";
+}
+
 export function CatalogueExplorer() {
   const [catalogue, setCatalogue] = useState(products);
   const [state, setState] = useState<"loading" | "ready" | "fallback">(
@@ -23,6 +40,7 @@ export function CatalogueExplorer() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [tankCapacity, setTankCapacity] = useState("All");
+  const [coverageArea, setCoverageArea] = useState("All");
   const [feature, setFeature] = useState("All");
   const [sort, setSort] = useState<"featured" | "capacity" | "name">(
     "featured",
@@ -35,6 +53,11 @@ export function CatalogueExplorer() {
       (product) => {
         const hasTank =
           tankCapacity === "All" || product.tankCapacity === tankCapacity;
+        // Coverage filtering is limited to models with a verified published
+        // figure. Tank capacity and air flow are not substitutes for area.
+        const hasCoverageArea =
+          coverageArea === "All" ||
+          coverageBandFor(product.coolingArea) === coverageArea;
         const productFeatures = [
           ...(product.features || []),
           ...(product.specifications || []).map(
@@ -46,7 +69,7 @@ export function CatalogueExplorer() {
         const hasFeature =
           feature === "All" || productFeatures.includes(feature.toLocaleLowerCase());
 
-        return hasTank && hasFeature;
+        return hasTank && hasCoverageArea && hasFeature;
       },
     );
 
@@ -60,7 +83,7 @@ export function CatalogueExplorer() {
       }
       return Number(Boolean(right.featured)) - Number(Boolean(left.featured));
     });
-  }, [query, category, tankCapacity, feature, sort, catalogue]);
+  }, [query, category, tankCapacity, coverageArea, feature, sort, catalogue]);
   const productCategories = [
     "All",
     ...new Set(catalogue.map((product) => product.category)),
@@ -77,11 +100,34 @@ export function CatalogueExplorer() {
     if (right === "All") return 1;
     return Number.parseInt(left, 10) - Number.parseInt(right, 10);
   });
-  const featureOptions = ["All", "Auto Swing", "Inverter compatible"];
+  const featureOptions = [
+    "All",
+    "Auto Swing",
+    "Inverter compatible",
+    "Ice chamber",
+    "Garden hose",
+    "Castor wheels",
+    "Mosquito free",
+    "Auto water refill system",
+  ].filter((option) => {
+    if (option === "All") return true;
+    return catalogue.some((product) => {
+      const productFeatures = [
+        ...(product.features || []),
+        ...(product.specifications || []).map(
+          (specification) => `${specification.label} ${specification.value}`,
+        ),
+      ]
+        .join(" ")
+        .toLocaleLowerCase();
+      return productFeatures.includes(option.toLocaleLowerCase());
+    });
+  });
   const hasFilters =
     Boolean(query.trim()) ||
     category !== "All" ||
     tankCapacity !== "All" ||
+    coverageArea !== "All" ||
     feature !== "All" ||
     sort !== "featured";
 
@@ -94,6 +140,7 @@ export function CatalogueExplorer() {
         setState(result.fallback ? "fallback" : "ready");
         setCategory("All");
         setTankCapacity("All");
+        setCoverageArea("All");
         setFeature("All");
         setSort("featured");
         setSelectedProduct(null);
@@ -114,12 +161,13 @@ export function CatalogueExplorer() {
 
   useEffect(() => {
     if (carouselRef.current) carouselRef.current.scrollLeft = 0;
-  }, [query, category, tankCapacity, feature, sort, catalogue]);
+  }, [query, category, tankCapacity, coverageArea, feature, sort, catalogue]);
 
   function clearFilters() {
     setQuery("");
     setCategory("All");
     setTankCapacity("All");
+    setCoverageArea("All");
     setFeature("All");
     setSort("featured");
   }
@@ -138,7 +186,7 @@ export function CatalogueExplorer() {
       <div className="catalogue-controls">
         <div className="catalogue-controls-intro">
           <span><SlidersHorizontal size={17} aria-hidden="true" /> Refine the range</span>
-          <p>Use model, range, tank capacity or a useful feature to narrow the catalogue.</p>
+          <p>Find a model by range, tank capacity, coverage area or feature.</p>
         </div>
         <div className="catalogue-filter-grid">
           <div className="catalogue-search">
@@ -150,30 +198,40 @@ export function CatalogueExplorer() {
               id="catalogue-search"
               type="search"
               value={query}
-              placeholder="Search by model or use"
+              placeholder="Search by model, range or feature"
               onChange={(event) => setQuery(event.target.value)}
             />
           </div>
           <label className="filter-field">
-            <span>Range</span>
+            <span>Cooler range</span>
             <select value={category} onChange={(event) => setCategory(event.target.value)}>
               {productCategories.map((item) => <option key={item}>{item}</option>)}
             </select>
           </label>
           <label className="filter-field">
-            <span>Tank capacity</span>
+            <span>Water tank capacity</span>
             <select value={tankCapacity} onChange={(event) => setTankCapacity(event.target.value)}>
               {tankCapacities.map((capacity) => <option key={capacity}>{capacity}</option>)}
             </select>
           </label>
           <label className="filter-field">
-            <span>Feature</span>
+            <span>Coverage area</span>
+            <select value={coverageArea} onChange={(event) => setCoverageArea(event.target.value)}>
+              {coverageAreaOptions.map((area) => (
+                <option key={area} value={area}>
+                  {area === "All" ? "All coverage areas" : area}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="filter-field">
+            <span>Features</span>
             <select value={feature} onChange={(event) => setFeature(event.target.value)}>
               {featureOptions.map((item) => <option key={item}>{item}</option>)}
             </select>
           </label>
           <label className="filter-field">
-            <span>Order</span>
+            <span>Sort by</span>
             <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
               <option value="featured">Featured</option>
               <option value="capacity">Tank capacity</option>

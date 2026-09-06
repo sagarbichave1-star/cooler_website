@@ -1,28 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import { Menu, Search, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 import { Brand } from "@/components/brand";
-import { WhatsAppIcon } from "@/components/brand-icons";
 import { siteConfig } from "@/config/site";
-import { smoothScrollToElement } from "@/lib/smooth-scroll";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const whatsappUrl = buildWhatsAppUrl(
-    "Hello Trimurti Coolers, I would like help choosing a cooler.",
-  );
+  const [activeHref, setActiveHref] = useState("#about");
 
-  function focusCatalogueSearch() {
-    const target = document.getElementById("catalogue");
-    const input = document.getElementById("catalogue-search") as HTMLInputElement | null;
-    if (!target) return;
+  useEffect(() => {
+    const sectionLinks = [
+      { id: "home", href: "#about" },
+      { id: "about", href: "#about" },
+      { id: "catalogue", href: "#catalogue" },
+      { id: "faq", href: "#faq" },
+      { id: "reviews", href: "#reviews" },
+      { id: "contact", href: "#contact" },
+    ];
 
-    setMenuOpen(false);
-    smoothScrollToElement(target);
-    window.setTimeout(() => input?.focus({ preventScroll: true }), 650);
-  }
+    function updateActiveSection() {
+      const scrollMarker = window.scrollY + window.innerHeight * 0.36;
+      let active = "#about";
+
+      for (const section of sectionLinks) {
+        const element = document.getElementById(section.id);
+        if (element && element.offsetTop <= scrollMarker) active = section.href;
+      }
+
+      setActiveHref(active);
+    }
+
+    updateActiveSection();
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    window.addEventListener("resize", updateActiveSection);
+    return () => {
+      window.removeEventListener("scroll", updateActiveSection);
+      window.removeEventListener("resize", updateActiveSection);
+    };
+  }, []);
 
   return (
     <header className="site-header">
@@ -34,8 +50,12 @@ export function SiteHeader() {
             <a
               key={item.label}
               href={item.href}
-              className="nav-link"
-              onClick={() => setMenuOpen(false)}
+              className={item.href === activeHref ? "nav-link active" : "nav-link"}
+              aria-current={item.href === activeHref ? "location" : undefined}
+              onClick={() => {
+                setActiveHref(item.href);
+                setMenuOpen(false);
+              }}
             >
               {item.label}
             </a>
@@ -43,19 +63,6 @@ export function SiteHeader() {
         </nav>
 
         <div className="header-actions">
-          <button className="icon-button" type="button" aria-label="Search catalogue" onClick={focusCatalogueSearch}>
-            <Search size={19} />
-          </button>
-          <a
-            className="icon-button header-whatsapp"
-            href={whatsappUrl}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Enquire on WhatsApp"
-            title="Enquire on WhatsApp"
-          >
-            <WhatsAppIcon width={19} height={19} />
-          </a>
           <button
             className="icon-button mobile-menu-button"
             type="button"
@@ -70,9 +77,16 @@ export function SiteHeader() {
 
       <div className={menuOpen ? "mobile-menu is-open" : "mobile-menu"} inert={!menuOpen}>
         <nav className="container mobile-nav" aria-label="Mobile navigation">
-          {siteConfig.navigation.map((item, index) => (
-            <a key={item.label} href={item.href} onClick={() => setMenuOpen(false)}>
-              <span>0{index + 1}</span>
+          {siteConfig.navigation.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              aria-current={item.href === activeHref ? "location" : undefined}
+              onClick={() => {
+                setActiveHref(item.href);
+                setMenuOpen(false);
+              }}
+            >
               {item.label}
             </a>
           ))}

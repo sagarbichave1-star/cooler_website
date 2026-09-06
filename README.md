@@ -56,9 +56,15 @@ The WhatsApp number must include the country code and contain digits only. Until
 
 The verified Trimurti Coolers Google Maps listing is built in as the map and review-link fallback. Until live review credentials are configured, the review section shows seven labelled, paraphrased summaries from the verified listing and links visitors to Google for all reviews. `GOOGLE_PLACES_API_KEY` is server-only and must never use the `NEXT_PUBLIC_` prefix. Restrict the separate Maps Embed key by website and API in Google Cloud.
 
+## Cookie, Google and DPDP consent
+
+The footer’s **Cookie settings** control opens a first-party consent notice. The user can keep essential storage only or allow optional Google review content and analytics; preferences are stored for 180 days in local storage. The notice explicitly names the **Digital Personal Data Protection Act, 2023 (DPDP Act)**, the optional Google data categories and their purposes, and explains that consent can be withdrawn at any time. The showroom map is a core location feature and loads independently of this optional choice.
+
+Google Consent Mode v2 defaults every consent category to denied before any optional Google tag. Choosing optional reviews and analytics grants only `analytics_storage`; `ad_storage`, `ad_user_data` and `ad_personalization` always remain denied. Google review content and GA4 are not mounted before the visitor permits them. This is a technical privacy control, not legal advice; the business remains responsible for its final DPDP notice, retention process and contact channel.
+
 ## Product catalogue
 
-The catalogue contains 37 supplied Novamax models across New Launch, Commercial / Desert and Personal / Home ranges. Each record is a separate enquiry target and uses manufacturer-hosted imagery. `src/data/products.ts` is the initial seed and public fallback. Before launch, visually verify each image and model specification against the current Novamax source.
+The catalogue contains 37 supplied Novamax models across New Launch, Commercial / Desert and Personal / Home ranges. Each record is a separate enquiry target. The 20 unique manufacturer photographs are stored as local, true-alpha PNG cutouts in `public/products/`; shared physical shells intentionally reuse one cutout. `src/data/products.ts` is the initial seed and public fallback. Before launch, visually verify each image and model specification against the current Novamax source.
 
 The hero presents five selected models in a restrained automatic rotation. It preloads the selected images and stops rotation when the visitor prefers reduced motion.
 
@@ -79,7 +85,7 @@ The homepage is statically rendered, while `/api/google-reviews` runs on the ser
 
 ## Search and enquiry
 
-Catalogue search checks the product name, category, summary, intended setting, model and features. The explorer offers a compact range, tank-capacity, feature and order filter set. Product enquiry links create a WhatsApp message containing only the selected product name. Navigation and search stay on the homepage and use smooth section scrolling.
+Catalogue search checks the product name, category, summary, intended setting, model and features. The explorer offers compact cooler-range, water-tank-capacity, coverage-area, feature and sort controls. Coverage uses the published Novamax bands: up to 200 sq ft, 200–350 sq ft, 350–500 sq ft and 500 sq ft and above. A model is included in a band only when its matching current Novamax product record publishes a coverage figure; all models remain available when no coverage band is selected. Product enquiry links create a WhatsApp message containing only the selected product name. Navigation and search stay on the homepage and use smooth section scrolling.
 
 ## SEO and indexing
 

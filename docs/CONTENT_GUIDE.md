@@ -17,10 +17,10 @@ Model, tank capacity, cooling area, power consumption, dimensions, and features 
 
 ## Product images
 
-Use real product photographs when they become available.
+The supplied Novamax product photographs are currently local, true-alpha PNG cutouts in `public/products/`. Keep these cutouts when changing catalogue records so every placement remains free from a rectangular image background.
 
 - Keep a consistent angle and crop across products
-- Prefer transparent or clean neutral backgrounds
+- Use a genuinely transparent background, not a checkerboard or white background baked into the file
 - Export modern WebP or AVIF files
 - Avoid placing important text inside images
 - Add descriptive alternative text based on what is visible

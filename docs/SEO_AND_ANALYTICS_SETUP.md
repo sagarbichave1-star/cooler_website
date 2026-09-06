@@ -9,7 +9,7 @@ This site is intentionally one page. The launch goal is to make that page easy f
 - Store structured data for Trimurti Coolers, its Surat address and phone number.
 - Visible FAQ content with matching FAQ structured data. Keep the visible answers and structured answers identical.
 - Semantic sections, clear headings, accessible product dialogs, model-specific WhatsApp enquiries without URLs or price references, and a clearly labelled temporary Google-feedback fallback.
-- Consent-aware GA4 support. It remains off until `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set and a visitor allows Google content.
+- Consent-aware GA4 support. It remains off until `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set and a visitor allows Google features. Google Consent Mode v2 starts denied, then grants only analytics storage after that affirmative choice; all advertising consent categories remain denied.
 
 ## Before domain launch
 

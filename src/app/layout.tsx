@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
@@ -65,6 +66,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        {/* No Google request occurs here: this creates the deny-by-default queue
+            before any optional Google tag can load. */}
+        <Script id="google-consent-default" strategy="beforeInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
+window.gtag('consent', 'default', {
+  analytics_storage: 'denied',
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  wait_for_update: 500
+});`}
+        </Script>
         <PrivacyProvider>
           <script
             type="application/ld+json"

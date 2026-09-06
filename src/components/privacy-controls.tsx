@@ -10,13 +10,35 @@ import {
 import { ShieldCheck } from "lucide-react";
 
 type Preference = "essential" | "external" | null;
-const STORAGE_KEY = "trimurti-privacy-v1";
+const STORAGE_KEY = "trimurti-privacy-v2";
 const EVENT = "trimurti-privacy-change";
 const PreferenceContext = createContext<{
   external: boolean;
   openSettings: () => void;
 }>({ external: false, openSettings: () => {} });
 let memoryPreference: Preference = null;
+
+type GoogleConsent = "granted" | "denied";
+
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
+function updateGoogleConsent(analytics: GoogleConsent) {
+  // Keep advertising consent denied: this site uses Google only for maps,
+  // reviews and optional aggregate analytics, never ad targeting.
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || ((...args) => window.dataLayer?.push(args));
+  window.gtag("consent", "update", {
+    analytics_storage: analytics,
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+  });
+}
 
 function getPreference(): Preference {
   try {
@@ -66,6 +88,7 @@ export function PrivacyProvider({ children }: { children: ReactNode }) {
     } catch {
       /* Preferences still work for this visit when storage is blocked. */
     }
+    updateGoogleConsent(preference === "external" ? "granted" : "denied");
     window.dispatchEvent(new Event(EVENT));
     setSettingsOpen(false);
   }
@@ -87,12 +110,21 @@ export function PrivacyProvider({ children }: { children: ReactNode }) {
             <ShieldCheck size={21} />
           </span>
           <div>
-            <h2>Your privacy choices.</h2>
+            <h2>Cookie &amp; Google consent</h2>
             <p>
-              We remember your preferences and use an essential cookie for admin
-              sign-in. Google Maps and review images load only if you allow
-              external content. Optional Google Analytics loads only after
-              you allow Google content and only when the site owner enables it.
+              Essential storage keeps this choice and supports admin sign-in.
+              The map is shown to help you find the showroom. If you allow
+              Google features, optional Google review content and Google
+              Analytics may use your device, browser and site interaction data.
+            </p>
+            <p>
+              <strong>DPDP Act, 2023 notice:</strong> Trimurti Coolers uses
+              optional Google processing to display Google feedback and
+              understand aggregate site use. Your choice is sent through Google
+              Consent Mode; analytics storage is granted only when you opt in,
+              while advertising storage, ad user data and ad personalisation
+              remain denied. You can refuse or withdraw consent at any time
+              using Cookie settings.
             </p>
             <div className="cookie-actions">
               <button
@@ -105,7 +137,7 @@ export function PrivacyProvider({ children }: { children: ReactNode }) {
                 className="button button-small"
                 onClick={() => choose("external")}
               >
-                Allow Google content
+                Allow reviews & analytics
               </button>
             </div>
           </div>

@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUpRight, ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { siteConfig } from "@/config/site";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import type { GoogleReviewSummary } from "@/lib/google-reviews";
 import { usePrivacy } from "./privacy-controls";
 
@@ -81,18 +80,6 @@ function Stars({ rating }: { rating: number }) {
 }
 
 function CuratedReviews() {
-  const [reviewIndex, setReviewIndex] = useState(0);
-  const visibleReviews = Array.from({ length: 3 }, (_, offset) =>
-    curatedReviews[(reviewIndex + offset) % curatedReviews.length],
-  );
-
-  function moveReviews(direction: -1 | 1) {
-    setReviewIndex(
-      (current) =>
-        (current + direction + curatedReviews.length) % curatedReviews.length,
-    );
-  }
-
   return (
     <section
       className="section reviews-section"
@@ -102,7 +89,6 @@ function CuratedReviews() {
       <div className="container">
         <div className="reviews-heading-row">
           <div>
-            <p className="eyebrow">Selected Google feedback</p>
             <h2 id="reviews-heading">What customers say.</h2>
           </div>
           <div
@@ -117,10 +103,10 @@ function CuratedReviews() {
           </div>
         </div>
 
-        <div className="reviews-carousel-wrap">
-          <div className="reviews-grid" aria-live="polite">
-            {visibleReviews.map((review) => (
-              <article className="review-card" key={review.id}>
+        <div className="reviews-marquee" tabIndex={0} aria-label="Automatically moving customer reviews">
+          <div className="reviews-marquee-track">
+            {[...curatedReviews, ...curatedReviews].map((review, index) => (
+              <article className="review-card" key={`${review.id}-${index}`}>
                 <div className="review-card-top">
                   <div className="review-author">
                     <span aria-hidden="true">{review.author.charAt(0)}</span>
@@ -132,57 +118,9 @@ function CuratedReviews() {
                   <Stars rating={5} />
                 </div>
                 <p>{review.text}</p>
-                <a
-                  className="review-source"
-                  href={siteConfig.mapUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View on Google Maps <ArrowUpRight size={14} />
-                </a>
               </article>
             ))}
           </div>
-          <div
-            className="reviews-carousel-controls"
-            aria-label="Review carousel controls"
-          >
-            <span>7 selected summaries</span>
-            <div>
-              <button
-                type="button"
-                onClick={() => moveReviews(-1)}
-                aria-label="Previous reviews"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button
-                type="button"
-                onClick={() => moveReviews(1)}
-                aria-label="Next reviews"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="reviews-placeholder reviews-source-note">
-          <div>
-            <h3>See all 50 reviews on Google.</h3>
-            <p>
-              These selected summaries are a temporary presentation while the
-              server-side Google Places connection is being configured.
-            </p>
-          </div>
-          <a
-            className="button button-secondary"
-            href={siteConfig.mapUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Open Google Maps <ArrowUpRight size={17} />
-          </a>
         </div>
       </div>
     </section>
@@ -200,6 +138,8 @@ function EnabledGoogleReviews() {
     "loading",
   );
   const [summary, setSummary] = useState<GoogleReviewSummary | null>(null);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -225,9 +165,16 @@ function EnabledGoogleReviews() {
     return () => controller.abort();
   }, []);
 
-  if (state === "empty" || state === "error") return <CuratedReviews />;
+  useEffect(() => {
+    const reviewCount = summary?.reviews.length || 0;
+    if (state !== "ready" || isCarouselPaused || reviewCount < 2) return;
+    const timer = window.setInterval(() => {
+      setReviewIndex((current) => (current + 1) % reviewCount);
+    }, 5600);
+    return () => window.clearInterval(timer);
+  }, [isCarouselPaused, state, summary?.reviews.length]);
 
-  const sourceUrl = summary?.sourceUrl || siteConfig.mapUrl;
+  if (state === "empty" || state === "error") return <CuratedReviews />;
 
   return (
     <section
@@ -238,7 +185,6 @@ function EnabledGoogleReviews() {
       <div className="container">
         <div className="reviews-heading-row">
           <div>
-            <p className="eyebrow">Google reviews</p>
             <h2 id="reviews-heading">What customers say.</h2>
           </div>
           {summary && (
@@ -268,63 +214,76 @@ function EnabledGoogleReviews() {
         )}
 
         {state === "ready" && summary && (
-          <div className="reviews-grid">
-            {summary.reviews.slice(0, 3).map((review) => (
-              <article className="review-card" key={review.id}>
-                <div className="review-card-top">
-                  <div className="review-author">
-                    {review.authorPhotoUrl ? (
-                      // Google review avatars are dynamic third-party URLs and cannot use a fixed Next Image host allowlist.
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={review.authorPhotoUrl}
-                        alt=""
-                        width="42"
-                        height="42"
-                        referrerPolicy="no-referrer"
-                      />
-                    ) : (
-                      <span aria-hidden="true">
-                        {review.authorName.charAt(0)}
-                      </span>
-                    )}
-                    <div>
-                      {review.authorUrl ? (
-                        <a
-                          href={review.authorUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {review.authorName}
-                        </a>
+          <div
+            className="reviews-carousel-wrap"
+            onMouseEnter={() => setIsCarouselPaused(true)}
+            onMouseLeave={() => setIsCarouselPaused(false)}
+            onFocus={() => setIsCarouselPaused(true)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget)) {
+                setIsCarouselPaused(false);
+              }
+            }}
+          >
+            <div className="reviews-grid" aria-live="polite">
+              {Array.from({ length: Math.min(3, summary.reviews.length) }, (_, offset) =>
+                summary.reviews[(reviewIndex + offset) % summary.reviews.length],
+              ).map((review) => (
+                <article className="review-card review-card-enter" key={`${review.id}-${reviewIndex}`}>
+                  <div className="review-card-top">
+                    <div className="review-author">
+                      {review.authorPhotoUrl ? (
+                        // Google review avatars are dynamic third-party URLs and cannot use a fixed Next Image host allowlist.
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={review.authorPhotoUrl}
+                          alt=""
+                          width="42"
+                          height="42"
+                          referrerPolicy="no-referrer"
+                        />
                       ) : (
-                        <strong>{review.authorName}</strong>
+                        <span aria-hidden="true">{review.authorName.charAt(0)}</span>
                       )}
-                      <small>{review.relativeDate}</small>
+                      <div>
+                        {review.authorUrl ? (
+                          <a href={review.authorUrl} target="_blank" rel="noreferrer">
+                            {review.authorName}
+                          </a>
+                        ) : (
+                          <strong>{review.authorName}</strong>
+                        )}
+                        <small>{review.relativeDate}</small>
+                      </div>
                     </div>
+                    <Stars rating={review.rating} />
                   </div>
-                  <Stars rating={review.rating} />
+                  <p>{review.text || "This reviewer left a star rating on Google."}</p>
+                </article>
+              ))}
+            </div>
+            {summary.reviews.length > 1 && (
+              <div className="reviews-carousel-controls" aria-label="Review carousel controls">
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setReviewIndex((current) => (current - 1 + summary.reviews.length) % summary.reviews.length)}
+                    aria-label="Previous reviews"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setReviewIndex((current) => (current + 1) % summary.reviews.length)}
+                    aria-label="Next reviews"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
                 </div>
-                <p>
-                  {review.text || "This reviewer left a star rating on Google."}
-                </p>
-                <a
-                  className="review-source"
-                  href={review.sourceUrl || sourceUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  View on Google Maps <ArrowUpRight size={14} />
-                </a>
-              </article>
-            ))}
+              </div>
+            )}
           </div>
         )}
-
-        <p className="reviews-note">
-          Live reviews will replace this temporary selection once Google Places
-          credentials are enabled on the client server.
-        </p>
       </div>
     </section>
   );

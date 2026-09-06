@@ -7,7 +7,18 @@ export function parseCatalogue(value: unknown): Product[] {
   const slugs = new Set<string>();
   return items.map((item) => {
     const input = record(item);
-    const { data } = productInput({ ...input, published: true });
+    // Bundled cutouts are an intentionally closed set of first-party assets.
+    // The admin API continues to accept HTTPS-only image URLs from users.
+    const bundledImage = typeof input.imageUrl === "string" &&
+      /^\/products\/[a-z0-9-]+\.png$/.test(input.imageUrl)
+      ? input.imageUrl
+      : undefined;
+    const { data } = productInput({
+      ...input,
+      imageUrl: bundledImage ? undefined : input.imageUrl,
+      published: true,
+    });
+    if (bundledImage) data.imageUrl = bundledImage;
     if (slugs.has(data.slug)) throw new Error("Duplicate product ID.");
     slugs.add(data.slug);
     if (["ocean", "lagoon", "aqua", "mist"].includes(String(input.tone)))

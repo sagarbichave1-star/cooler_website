@@ -19,9 +19,15 @@ export function ConsentAwareGoogleAnalytics() {
       />
       <Script id="google-analytics" strategy="afterInteractive">
         {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', ${safeMeasurementId});`}
+window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
+window.gtag('consent', 'update', {
+  analytics_storage: 'granted',
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied'
+});
+window.gtag('js', new Date());
+window.gtag('config', ${safeMeasurementId});`}
       </Script>
     </>
   );

@@ -26,83 +26,74 @@ const slugFor = (name: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-// Manufacturer-hosted product photography. Capacity variants intentionally keep
-// their own catalogue records, even where the physical shell is shared.
+// Transparent, locally hosted product cutouts. Capacity variants intentionally
+// keep their own catalogue records, even where the physical shell is shared.
+// This avoids white image stages across the cards, hero, and product details.
 const productImages: Record<string, string> = {
-  apex:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/z5bjNI0bhTT1cOx9K5LiWFBm-bskrcqvst10drq1xfmtxsw9ohtk3f6sv5ujlvfub-480.jpg",
-  bajrangi:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/xrR1H4PvKINxtqIXOO6V9R5U-ielkh12t1i1zj9iyi2i2u5aokgovygpxjfvkgoos-480.jpg",
-  dominator:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/QBe9ti4MWDQz2WT1EjyhQ2Em-okl8gjmmdupck5z5qf4cfav5wzwepfkpo7yurqnp-480.jpg",
-  "rambo-max":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/va59Co84AwnRoqinZe8ZCCPN-z4sgywuxyq5d1y3ijebljmfsgmhs12che8ifbyjz-480.jpg",
-  "tent-panther-with-autoswing":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/fHV3AnBvgY7EQs54qYSxtTsW-rtw95i53clnkwl98rlvhpgvbz4tuah2gdbviq0at-480.jpg",
-  "epic-max":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/JYfnyyH8hPJZHdtxyTHSx17J-fvgexpokzrd70hybrgiln9rctx1jgtihlr2i4xug-480.jpg",
-  atlas:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/9bMcyIExtC6tqI8cGrppjty6-fjmscem56pdhzdasuwxeh8nby7updgzoteutjed6-480.png",
-  iceberg:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/kiDwgmp84XZNdExICCsBj6xk-vzqgzotbqw3wunwmbaesidf84bnuozrrsji6ymhc-480.png",
-  titan:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/rSOYlCj5jCRYK6tQfH5rsD6z-xez59bfdewxqfqctpheujtlwhl3vml3zk3zbpgwg-500.png",
-  blaze:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/nvMNMhtunisoeLy3ZuBdu1a0-qc5hugqlsgnogrkxqioic3afh58awcmwconm61gd-480.jpg",
-  "blaze-80":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/QBe9ti4MWDQz2WT1EjyhQ2Em-okl8gjmmdupck5z5qf4cfav5wzwepfkpo7yurqnp-480.jpg",
-  "rambo-jr":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/7R6CvDbbLIdo0dLxzsN6VOTp-bpgmtrab1il8dqgc4fkzcyi7g6cjyaakmvg0alm4-480.jpg",
-  "rambo-jr-100":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/GIQDfQI0ecQu8IQVNaDJQHzq-cu5tos6niiq4eqhe1r4hkpatpcdiqin2tu68bjyd-480.jpg",
-  "rambo-dd":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/7R6CvDbbLIdo0dLxzsN6VOTp-bpgmtrab1il8dqgc4fkzcyi7g6cjyaakmvg0alm4-480.jpg",
-  proto:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/rSOYlCj5jCRYK6tQfH5rsD6z-xez59bfdewxqfqctpheujtlwhl3vml3zk3zbpgwg-500.png",
-  "proto-100":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/rSOYlCj5jCRYK6tQfH5rsD6z-xez59bfdewxqfqctpheujtlwhl3vml3zk3zbpgwg-500.png",
-  epic:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/JYfnyyH8hPJZHdtxyTHSx17J-fvgexpokzrd70hybrgiln9rctx1jgtihlr2i4xug-480.jpg",
-  "epic-100l":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/JYfnyyH8hPJZHdtxyTHSx17J-fvgexpokzrd70hybrgiln9rctx1jgtihlr2i4xug-480.jpg",
-  "rambo-100":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/AsO2MIwst937M9Z3daqUUhDI-gg8wzy5rg5i1l9b9vcs8xk5d71q8cjdjydyyidhr-480.jpg",
-  "rambo-125":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/7R6CvDbbLIdo0dLxzsN6VOTp-bpgmtrab1il8dqgc4fkzcyi7g6cjyaakmvg0alm4-480.jpg",
-  "rambo-150":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/GIQDfQI0ecQu8IQVNaDJQHzq-cu5tos6niiq4eqhe1r4hkpatpcdiqin2tu68bjyd-480.jpg",
-  "rambo-100-plus":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/AsO2MIwst937M9Z3daqUUhDI-gg8wzy5rg5i1l9b9vcs8xk5d71q8cjdjydyyidhr-480.jpg",
-  "rambo-125-plus":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/7hbWJKaYO0j6fvHOuaU8Hinp-ldfscr5nexir8huxqgaug9icnuawhohkweoxcyms-480.jpg",
-  "rambo-150-plus":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/va59Co84AwnRoqinZe8ZCCPN-z4sgywuxyq5d1y3ijebljmfsgmhs12che8ifbyjz-480.jpg",
-  "gloster-100":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/7G08vlGPF7A8GrxGPszPnSg5-jghs0fayjdp8oyastzknaglm6jxqziwlj75bkr96-1366.jpg",
-  "gloster-125":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/rgcpw12PmytwPLqM6iGZ1l5W-hzayiwnaqbojsfh43qqjtrkazldkevrwwg6hqdhz-1366.jpg",
-  "gloster-150":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/hVzNTedIBth3kjW4OEsA7sAz-m9yr9sy0wvsyqgivemo3hijajqkvnqhxhdszuwbv-1366.jpg",
-  "tent-panther":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/fHV3AnBvgY7EQs54qYSxtTsW-rtw95i53clnkwl98rlvhpgvbz4tuah2gdbviq0at-480.jpg",
-  "tent-marvel":
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/fHV3AnBvgY7EQs54qYSxtTsW-rtw95i53clnkwl98rlvhpgvbz4tuah2gdbviq0at-480.jpg",
-  mist:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/Niox9JURmJZUGAj1E36Af0jZ-qloxztg7xw6jdaeapgpnq0zfluvxsvqbs6aiiwlm-480.png",
-  zephyr:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/9bMcyIExtC6tqI8cGrppjty6-fjmscem56pdhzdasuwxeh8nby7updgzoteutjed6-480.png",
-  whiff:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/xrR1H4PvKINxtqIXOO6V9R5U-ielkh12t1i1zj9iyi2i2u5aokgovygpxjfvkgoos-480.jpg",
-  kazer:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/z5bjNI0bhTT1cOx9K5LiWFBm-bskrcqvst10drq1xfmtxsw9ohtk3f6sv5ujlvfub-480.jpg",
-  supremo:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/EQbxHtMlo0TUobfl5zZJD7fL-ubond8dd3lrumqwx0asjv5dxwwxseovutngd52vb-480.png",
-  iceland:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/kiDwgmp84XZNdExICCsBj6xk-vzqgzotbqw3wunwmbaesidf84bnuozrrsji6ymhc-480.png",
-  aeon:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/AHs37WhCRWrdkC70iJxLjA9K-qkev5dkfnmzy09xcwq4yp2ltndeaoowdp8x3tcr0-480.png",
-  estina:
-    "https://novamaxindia.com/uploads/media/2026/09/renditions/nvMNMhtunisoeLy3ZuBdu1a0-qc5hugqlsgnogrkxqioic3afh58awcmwconm61gd-480.jpg",
+  apex: "/products/apex-kazer.png",
+  bajrangi: "/products/bajrangi-whiff.png",
+  dominator: "/products/dominator-blaze-80.png",
+  "rambo-max": "/products/rambo-max-rambo-150-plus.png",
+  "tent-panther-with-autoswing": "/products/tent-panther.png",
+  "epic-max": "/products/epic.png",
+  atlas: "/products/atlas-zephyr.png",
+  iceberg: "/products/iceberg-iceland.png",
+  titan: "/products/titan-proto.png",
+  blaze: "/products/blaze-estina.png",
+  "blaze-80": "/products/dominator-blaze-80.png",
+  "rambo-jr": "/products/rambo-jr.png",
+  "rambo-jr-100": "/products/rambo-jr-100.png",
+  "rambo-dd": "/products/rambo-jr.png",
+  proto: "/products/titan-proto.png",
+  "proto-100": "/products/titan-proto.png",
+  epic: "/products/epic.png",
+  "epic-100l": "/products/epic.png",
+  "rambo-100": "/products/rambo-100.png",
+  "rambo-125": "/products/rambo-jr.png",
+  "rambo-150": "/products/rambo-jr-100.png",
+  "rambo-100-plus": "/products/rambo-100.png",
+  "rambo-125-plus": "/products/rambo-125-plus.png",
+  "rambo-150-plus": "/products/rambo-max-rambo-150-plus.png",
+  "gloster-100": "/products/gloster-100.png",
+  "gloster-125": "/products/gloster-125.png",
+  "gloster-150": "/products/gloster-150.png",
+  "tent-panther": "/products/tent-panther.png",
+  "tent-marvel": "/products/tent-panther.png",
+  mist: "/products/mist.png",
+  zephyr: "/products/atlas-zephyr.png",
+  whiff: "/products/bajrangi-whiff.png",
+  kazer: "/products/apex-kazer.png",
+  supremo: "/products/supremo.png",
+  iceland: "/products/iceberg-iceland.png",
+  aeon: "/products/aeon.png",
+  estina: "/products/blaze-estina.png",
+};
+
+// Verified against the matching current Novamax product records on 6 September
+// 2026. Models omitted here were not matched to a current published coverage
+// figure, so the website deliberately does not infer an area from tank size or
+// air-flow alone.
+const verifiedCoolingAreas: Record<string, string> = {
+  mist: "500 sq ft",
+  kazer: "500 sq ft",
+  whiff: "600 sq ft",
+  zephyr: "600 sq ft",
+  iceland: "550 sq ft",
+  aeon: "500 sq ft",
+  supremo: "550 sq ft",
+  blaze: "500 sq ft",
+  "blaze-80": "500 sq ft",
+  epic: "500 sq ft",
+  "rambo-100": "1200 sq ft",
+  "rambo-125": "1200 sq ft",
+  "rambo-150": "1200 sq ft",
+  "rambo-100-plus": "1200 sq ft",
+  "rambo-125-plus": "1200 sq ft",
+  "rambo-150-plus": "1200 sq ft",
+  "gloster-100": "1500 sq ft",
+  "gloster-125": "1500 sq ft",
+  "gloster-150": "1500 sq ft",
+  proto: "1000 sq ft",
 };
 
 const apexFeatures = [
@@ -553,6 +544,7 @@ function technicalProduct(
     tankCapacity,
     powerConsumption,
     dimensions: `${dimensions} mm`,
+    coolingArea: verifiedCoolingAreas[slugFor(name)],
     specifications,
     tone: tones[index % tones.length],
     featured: index < 4,
@@ -574,6 +566,7 @@ export const products: Product[] = [
         features: [...features],
         tone: tones[index % tones.length],
         featured: index < 4,
+        coolingArea: verifiedCoolingAreas[slugFor(name)],
         imageUrl: productImages[slugFor(name)],
       }) satisfies Product,
   ),

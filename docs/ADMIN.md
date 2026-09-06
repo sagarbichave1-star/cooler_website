@@ -38,7 +38,7 @@ The contact form includes field limits, consent, a hidden `website` honeypot, or
 
 The inbox intentionally has no sample customer records. The database phase will connect a paginated list, enquiry details and new/contacted/closed status controls.
 
-Cookie settings persist an essential/external preference in local storage for up to 180 days. Google Maps and the reviews component (including external avatars) mount only after external-content consent. Essential-only revokes that display. Cookie settings can be reopened from the footer. No analytics or advertising scripts are installed.
+Cookie settings persist an essential/external preference in local storage for up to 180 days. The showroom map is a core location feature and always loads. The live reviews component (including external avatars) and optional GA4 mount only after the visitor allows reviews and analytics. Essential-only revokes those optional features. Cookie settings can be reopened from the footer. No advertising scripts are installed.
 
 ## Hosting and next phase
 

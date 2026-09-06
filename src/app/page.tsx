@@ -3,9 +3,7 @@ import {
   ArrowRight,
   Droplets,
   Gauge,
-  MapPin,
   Maximize2,
-  Waves,
   Zap,
 } from "lucide-react";
 import { CatalogueExplorer } from "@/components/catalogue-explorer";
@@ -44,19 +42,34 @@ const selectionPoints = [
 
 const faqItems = [
   {
-    question: "Is Trimurti Coolers an authorised Novamax distributor?",
+    question: "Is Trimurti Coolers an authorised Novamax distributor and service provider?",
     answer:
-      "Yes. Trimurti Coolers is an authorised Novamax distributor in Surat. Ask us on WhatsApp about the model that suits your space.",
+      "Yes. Trimurti Coolers is an authorised Novamax distributor and service provider in Surat. We help customers understand the range, choose a suitable model and receive local support for their Novamax cooler.",
+  },
+  {
+    question: "How should I choose a Novamax cooler for my space?",
+    answer:
+      "Start with the space, ventilation and intended use. Then compare the model's water-tank capacity, air flow, dimensions and available features. We can help you narrow the range on WhatsApp before you decide.",
   },
   {
     question: "Can I see air-cooler specifications before I enquire?",
     answer:
-      "Yes. Open any product in the catalogue to review the available capacity, power, dimensions and feature information before starting your WhatsApp enquiry.",
+      "Yes. Open any model in the catalogue to review its available tank capacity, power, dimensions, air flow and feature information before starting a WhatsApp enquiry.",
+  },
+  {
+    question: "What does the coverage-area filter mean?",
+    answer:
+      "It groups models into published coverage bands: up to 200 sq ft, 200–350 sq ft, 350–500 sq ft and 500 sq ft and above. Models without a verified published coverage figure remain visible when all coverage areas are selected.",
+  },
+  {
+    question: "Can I enquire for a commercial, office or event space?",
+    answer:
+      "Yes. Tell us the type of space, approximate size and ventilation on WhatsApp. We will help you identify suitable Novamax commercial or personal-range models from the available catalogue.",
   },
   {
     question: "Do you publish product prices on the website?",
     answer:
-      "No. Availability and quotations are handled directly on WhatsApp so you can receive the right recommendation for your requirement.",
+      "No. Availability and quotations are handled directly on WhatsApp, after we understand the cooling requirement and the model you are considering.",
   },
 ];
 
@@ -79,17 +92,11 @@ export default function HomePage() {
         <div className="hero-watermark" aria-hidden="true">COOL</div>
         <div className="container hero-grid">
           <div className="hero-copy">
-            <p className="hero-eyebrow">
-              <span className="hero-eyebrow-mark" aria-hidden="true"><Waves size={15} /></span>
-              <span className="hero-eyebrow-name">Trimurti Coolers</span>
-              <span className="hero-eyebrow-divider" aria-hidden="true" />
-              <span className="hero-location"><MapPin size={13} aria-hidden="true" /> Authorised Novamax distributor · Surat</span>
-            </p>
-            <h1>Novamax air coolers, clearly specified.</h1>
+            <h1>Surat&apos;s authorised Novamax distributor &amp; service provider.</h1>
             <p className="hero-description">
-              Trimurti Coolers presents the Novamax range with the product
-              information that matters: capacity, airflow, dimensions and the
-              right context for every space.
+              Commercial strength. Personal comfort. Novamax air coolers built
+              to take on Surat&apos;s heat—with clear product details, practical
+              selection guidance and local service support.
             </p>
             <div className="hero-actions">
               <Link className="button" href="#catalogue">
@@ -109,19 +116,21 @@ export default function HomePage() {
         <div className="container about-grid">
           <div>
             <p className="eyebrow">About Trimurti Coolers</p>
-            <h2>A straightforward way to choose well.</h2>
+            <h2>Novamax range knowledge, close to home.</h2>
           </div>
           <div className="about-copy">
             <p>
-              Choosing an air cooler is about more than one number on a
-              specification sheet. The room, ventilation, refill routine and
-              intended use all shape the right choice.
+              With more than a decade of experience in air-cooler guidance,
+              Trimurti Coolers knows the difference a well-matched model can
+              make. The right choice starts with the space: its scale,
+              ventilation, daily use and refill routine.
             </p>
             <p>
-              As Surat&apos;s authorised Novamax distributor, Trimurti Coolers
-              starts with that context. This site makes the range easier to
-              understand, then keeps the next conversation direct and useful
-              on WhatsApp.
+              As an authorised Novamax distributor and service provider in
+              Surat, we make the range accessible through clearly presented
+              specifications, direct local guidance and support. It is a
+              focused extension of the Novamax range—not a generic
+              marketplace—with the next conversation kept simple on WhatsApp.
             </p>
           </div>
         </div>
@@ -132,8 +141,8 @@ export default function HomePage() {
           <div className="catalogue-intro">
             <SectionHeading
               eyebrow="Product range"
-              title={<>The Novamax range, <em>organised around your space.</em></>}
-              description="Every model is presented with its available specifications. Filter the range, compare what matters and continue the conversation on WhatsApp when you are ready."
+              title={<>The Novamax range, <em>made easier to navigate.</em></>}
+              description="Every model is presented with the available product information. Filter by capacity, coverage area and feature, then compare the details that matter for your space."
             />
             <aside className="range-guide" aria-labelledby="range-guide-heading">
               <p className="eyebrow">How to assess a cooler</p>
@@ -162,9 +171,9 @@ export default function HomePage() {
       <section className="section faq-section" id="faq" aria-labelledby="faq-heading">
         <div className="container faq-layout">
           <SectionHeading
-            eyebrow="Useful answers"
-            title={<>A few things, <em>made clear.</em></>}
-            description="Direct answers about the Novamax range, product details and how Trimurti Coolers handles enquiries."
+            eyebrow="Helpful guidance"
+            title={<>Practical answers, <em>before you enquire.</em></>}
+            description="Straightforward guidance on the Novamax range, the information shown here and how Trimurti Coolers can help you choose."
           />
           <div className="faq-list">
             {faqItems.map((item) => (
