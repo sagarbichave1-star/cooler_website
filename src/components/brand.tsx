@@ -10,10 +10,10 @@ export function Brand({ onClick }: BrandProps) {
     <Link className="brand" href="/" aria-label="Trimurti Coolers home" onClick={onClick}>
       <Image
         className="brand-logo"
-        src="/brand/trimurti-coolers-logo.svg"
+        src="/brand/trimurti-coolers-logo-generated.png"
         alt="Trimurti Coolers"
-        width={560}
-        height={160}
+        width={2073}
+        height={758}
         priority
       />
     </Link>

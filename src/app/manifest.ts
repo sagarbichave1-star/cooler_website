@@ -13,9 +13,9 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#066bc7",
     icons: [
       {
-        src: "/icon.svg",
-        sizes: "any",
-        type: "image/svg+xml",
+        src: "/brand/trimurti-coolers-mark-generated.png",
+        sizes: "1254x1254",
+        type: "image/png",
       },
     ],
   };

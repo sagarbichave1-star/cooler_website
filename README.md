@@ -15,6 +15,8 @@ A responsive one-page Next.js catalogue website for **Trimurti Coolers**, an aut
 - Server-side Google Places review integration
 - Consent-aware Google Analytics 4 support
 
+The active customer-facing logo assets are the transparent generated PNG lockup and TE whirl mark in `public/brand/`. The same whirl mark is used by `src/app/icon.png` for the browser tab and installed app icon.
+
 ## Local development
 
 Requirements:

@@ -4,7 +4,7 @@
 
 Use **Trimurti Coolers** as the customer-facing name. Trimurti Enterprise and its other businesses are out of scope for this website.
 
-The regenerated TE symbol and wordmark live in `public/brand/`. They are deliberately simple vector files so they remain crisp at small header sizes and larger print or signage sizes.
+The active regenerated TE symbol and wordmark live in `public/brand/` as transparent PNG assets generated from the supplied reference: `trimurti-coolers-mark-generated.png` for the favicon/app icon and `trimurti-coolers-logo-generated.png` for the website lockup. The older SVG drafts remain in the folder as source alternatives but are not used by the public header or tab icon.
 
 ## Voice
 
