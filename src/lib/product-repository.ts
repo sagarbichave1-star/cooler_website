@@ -12,11 +12,26 @@ export type StoredProduct = Product & {
 export const productCollectionValidator: Document = {
   $jsonSchema: {
     bsonType: "object",
-    required: ["slug", "name", "category", "summary", "intendedFor", "tone", "published", "createdAt", "updatedAt"],
+    required: [
+      "slug",
+      "name",
+      "category",
+      "summary",
+      "intendedFor",
+      "tone",
+      "published",
+      "createdAt",
+      "updatedAt",
+    ],
     additionalProperties: false,
     properties: {
       _id: {},
-      slug: { bsonType: "string", minLength: 1, maxLength: 80, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+      slug: {
+        bsonType: "string",
+        minLength: 1,
+        maxLength: 80,
+        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      },
       name: { bsonType: "string", minLength: 1, maxLength: 120 },
       category: { bsonType: "string", minLength: 1, maxLength: 60 },
       summary: { bsonType: "string", minLength: 1, maxLength: 1500 },
@@ -30,7 +45,11 @@ export const productCollectionValidator: Document = {
       powerConsumption: { bsonType: "string", maxLength: 160 },
       dimensions: { bsonType: "string", maxLength: 160 },
       imageUrl: { bsonType: "string", maxLength: 600 },
-      features: { bsonType: "array", maxItems: 20, items: { bsonType: "string", maxLength: 160 } },
+      features: {
+        bsonType: "array",
+        maxItems: 20,
+        items: { bsonType: "string", maxLength: 160 },
+      },
       specifications: {
         bsonType: "array",
         maxItems: 50,
@@ -53,49 +72,83 @@ export const productCollectionValidator: Document = {
 let setup: Promise<Collection<StoredProduct>> | undefined;
 
 async function productsCollection() {
-  if (!setup) setup = setupCollection().catch((error) => {
-    setup = undefined;
-    throw error;
-  });
+  if (!setup)
+    setup = setupCollection().catch((error) => {
+      setup = undefined;
+      throw error;
+    });
   return setup;
 }
 
 async function setupCollection() {
   const db = await database();
-  const exists = await db.listCollections({ name: "products" }, { nameOnly: true }).hasNext();
+  const exists = await db
+    .listCollections({ name: "products" }, { nameOnly: true })
+    .hasNext();
   let created = false;
   if (!exists) {
     try {
-      await db.createCollection<StoredProduct>("products", { validator: productCollectionValidator });
+      await db.createCollection<StoredProduct>("products", {
+        validator: productCollectionValidator,
+      });
       created = true;
     } catch (error) {
-      if (!(error && typeof error === "object" && "code" in error && error.code === 48)) throw error;
+      if (!(
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        error.code === 48
+      ))
+        throw error;
     }
   }
   const collection = db.collection<StoredProduct>("products");
-  await collection.createIndex({ slug: 1 }, { unique: true, name: "unique_product_slug" });
-  await collection.createIndex({ published: 1, category: 1, name: 1 }, { name: "public_catalogue" });
+  await collection.createIndex(
+    { slug: 1 },
+    { unique: true, name: "unique_product_slug" },
+  );
+  await collection.createIndex(
+    { published: 1, category: 1, name: 1 },
+    { name: "public_catalogue" },
+  );
   if (created && products.length) {
     const now = new Date();
-    await collection.insertMany(products.map((product) => ({ ...product, published: true, createdAt: now, updatedAt: now })));
+    await collection.insertMany(
+      products.map((product) => ({
+        ...product,
+        published: true,
+        createdAt: now,
+        updatedAt: now,
+      })),
+    );
   }
   return collection;
 }
 
-function adminDto({ published, createdAt: _created, updatedAt: _updated, ...data }: StoredProduct) {
+function adminDto(document: StoredProduct) {
+  const { published } = document;
+  const data = { ...document };
+  delete (data as Partial<StoredProduct>).published;
+  delete (data as Partial<StoredProduct>).createdAt;
+  delete (data as Partial<StoredProduct>).updatedAt;
   return { slug: data.slug, published, data };
 }
 
 export async function listPublicProducts() {
   return (await productsCollection())
-    .find({ published: true }, { projection: { _id: 0, published: 0, createdAt: 0, updatedAt: 0 } })
+    .find(
+      { published: true },
+      { projection: { _id: 0, published: 0, createdAt: 0, updatedAt: 0 } },
+    )
     .sort({ featured: -1, name: 1 })
     .limit(100)
     .toArray() as Promise<Product[]>;
 }
 
 export async function listAdminProducts() {
-  const items = await (await productsCollection())
+  const items = await (
+    await productsCollection()
+  )
     .find({}, { projection: { _id: 0 } })
     .sort({ updatedAt: -1 })
     .limit(100)
@@ -103,11 +156,18 @@ export async function listAdminProducts() {
   return items.map(adminDto);
 }
 
-export async function saveProduct(originalSlug: string | undefined, product: Product, published: boolean) {
+export async function saveProduct(
+  originalSlug: string | undefined,
+  product: Product,
+  published: boolean,
+) {
   const collection = await productsCollection();
   const now = new Date();
   const existing = originalSlug
-    ? await collection.findOne({ slug: originalSlug }, { projection: { createdAt: 1 } })
+    ? await collection.findOne(
+        { slug: originalSlug },
+        { projection: { createdAt: 1 } },
+      )
     : null;
   const document: OptionalUnlessRequiredId<StoredProduct> = {
     ...product,
@@ -119,9 +179,14 @@ export async function saveProduct(originalSlug: string | undefined, product: Pro
     await collection.insertOne(document);
     return true;
   }
-  return (await collection.replaceOne({ slug: originalSlug }, document)).matchedCount === 1;
+  return (
+    (await collection.replaceOne({ slug: originalSlug }, document))
+      .matchedCount === 1
+  );
 }
 
 export async function removeProduct(slug: string) {
-  return (await (await productsCollection()).deleteOne({ slug })).deletedCount === 1;
+  return (
+    (await (await productsCollection()).deleteOne({ slug })).deletedCount === 1
+  );
 }

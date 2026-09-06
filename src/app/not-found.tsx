@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Page Not Found",
-  description: "The requested Tirupati Coolers page could not be found.",
+  description: "The requested Trimurti Coolers page could not be found.",
   alternates: {},
   robots: { index: false, follow: true },
 };

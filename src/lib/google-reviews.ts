@@ -59,7 +59,7 @@ export function normalizeGooglePlaceReviews(payload: GooglePlaceResponse): Googl
   const reviews = Array.isArray(payload.reviews) ? payload.reviews : [];
 
   return {
-    businessName: optionalString(payload.displayName?.text) || "Tirupati Coolers",
+    businessName: optionalString(payload.displayName?.text) || "Trimurti Coolers",
     rating: safeRating(payload.rating),
     totalReviews: typeof payload.userRatingCount === "number" && Number.isSafeInteger(payload.userRatingCount) ? Math.max(0, payload.userRatingCount) : 0,
     sourceUrl,

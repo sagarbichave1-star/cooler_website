@@ -25,7 +25,7 @@ export function ContactForm() {
       const parsed = enquiryInput(data);
       setWhatsapp(
         buildWhatsAppUrl(
-          `Hello Tirupati Coolers,\nName: ${parsed.name}\nPhone: ${parsed.phone}\n${parsed.email ? `Email: ${parsed.email}\n` : ""}\n${parsed.message}`,
+          `Hello Trimurti Coolers,\nName: ${parsed.name}\nPhone: ${parsed.phone}\n${parsed.email ? `Email: ${parsed.email}\n` : ""}\n${parsed.message}`,
         ),
       );
       const response = await fetch("/api/enquiries", {
@@ -112,7 +112,7 @@ export function ContactForm() {
         </div>
         <label className="form-check">
           <input name="consent" type="checkbox" required /> I agree to be
-          contacted by Tirupati Coolers about this enquiry.
+          contacted by Trimurti Coolers about this enquiry.
         </label>
         <p className="contact-privacy-note">
           Your contact details are used to respond to your enquiry. No marketing

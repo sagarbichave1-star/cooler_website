@@ -10,8 +10,8 @@ import {
 import { ShieldCheck } from "lucide-react";
 
 type Preference = "essential" | "external" | null;
-const STORAGE_KEY = "tirupati-privacy-v1";
-const EVENT = "tirupati-privacy-change";
+const STORAGE_KEY = "trimurti-privacy-v1";
+const EVENT = "trimurti-privacy-change";
 const PreferenceContext = createContext<{
   external: boolean;
   openSettings: () => void;

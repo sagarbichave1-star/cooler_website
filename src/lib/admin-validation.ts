@@ -70,13 +70,20 @@ export function productInput(value: unknown): {
     if (!Array.isArray(input.features) || input.features.length > 20)
       throw new InputError("Check product features.");
     data.features = input.features.map((value) => {
-      if (typeof value !== "string" || !value.trim() || value.trim().length > 160)
+      if (
+        typeof value !== "string" ||
+        !value.trim() ||
+        value.trim().length > 160
+      )
         throw new InputError("Check product features.");
       return value.trim();
     });
   }
   if (input.specifications !== undefined) {
-    if (!Array.isArray(input.specifications) || input.specifications.length > 50)
+    if (
+      !Array.isArray(input.specifications) ||
+      input.specifications.length > 50
+    )
       throw new InputError("Check product specifications.");
     data.specifications = input.specifications.map((value) => {
       const specification = record(value);
@@ -93,10 +100,7 @@ export function enquiryInput(value: unknown) {
   const input = record(value);
   const phone = field(input, "phone", 24);
   const digits = phone.replace(/\D/g, "").length;
-  if (
-    !/^\+?[\d ()-]{10,24}$/.test(phone) ||
-    digits < 10 || digits > 15
-  )
+  if (!/^\+?[\d ()-]{10,24}$/.test(phone) || digits < 10 || digits > 15)
     throw new InputError(
       "Enter a valid phone number including the country code.",
     );

@@ -1,14 +1,22 @@
 import { describe, expect, it } from "vitest";
-import { filterProducts } from "@/data/products";
+import { filterProducts, products } from "@/data/products";
 import { buildWhatsAppUrl, productEnquiryMessage } from "@/lib/whatsapp";
 import { normalizeGooglePlaceReviews } from "@/lib/google-reviews";
 import { smoothScrollDuration, smoothScrollEasing } from "@/lib/smooth-scroll";
 
 describe("catalogue search", () => {
-  it("finds a product by its intended use", () => {
-    expect(filterProducts("compact").map((product) => product.slug)).toEqual([
-      "tower-cooler",
-    ]);
+  it("contains every supplied product with unique IDs", () => {
+    expect(products).toHaveLength(37);
+    expect(new Set(products.map((product) => product.slug)).size).toBe(37);
+    expect(
+      products.filter((product) => product.category === "New Launch"),
+    ).toHaveLength(8);
+    expect(
+      products.filter((product) => product.category === "Commercial / Desert"),
+    ).toHaveLength(21);
+    expect(
+      products.filter((product) => product.category === "Personal / Home"),
+    ).toHaveLength(8);
   });
 
   it("returns an empty list for an unknown query", () => {
@@ -16,7 +24,32 @@ describe("catalogue search", () => {
   });
 
   it("combines search and category filters", () => {
-    expect(filterProducts("cooler", "Personal")).toHaveLength(1);
+    expect(filterProducts("Ice chamber", "Personal / Home")).toHaveLength(8);
+    expect(
+      filterProducts("14,500 m³/H", "Commercial / Desert").map(
+        (product) => product.name,
+      ),
+    ).toEqual(["Tent Marvel"]);
+  });
+
+  it("preserves representative launch and technical details", () => {
+    const apex = products.find((product) => product.name === "Apex");
+    const titan = products.find((product) => product.name === "Titan");
+    const kazer = products.find((product) => product.name === "Kazer");
+    expect(apex?.features).toContain("Air throw up to 30 ft");
+    expect(titan).toMatchObject({
+      tankCapacity: "15 L",
+      powerConsumption: "150 W",
+      dimensions: "310×470×590 mm",
+    });
+    expect(titan?.specifications).toContainEqual({
+      label: "Fan size",
+      value: '9"',
+    });
+    expect(kazer?.specifications).toContainEqual({
+      label: "Ice chamber",
+      value: "Yes",
+    });
   });
 });
 
@@ -32,14 +65,16 @@ describe("WhatsApp enquiry copy", () => {
   });
 
   it("creates a direct WhatsApp enquiry using the configured company number", () => {
-    expect(buildWhatsAppUrl("Hello")).toBe("https://wa.me/919033148505?text=Hello");
+    expect(buildWhatsAppUrl("Hello")).toBe(
+      "https://wa.me/919033148505?text=Hello",
+    );
   });
 });
 
 describe("Google review normalization", () => {
   it("keeps the public review fields used by the interface", () => {
     const result = normalizeGooglePlaceReviews({
-      displayName: { text: "Tirupati Coolers" },
+      displayName: { text: "Trimurti Coolers" },
       rating: 4.6,
       userRatingCount: 18,
       googleMapsUri: "https://maps.google.com/example",

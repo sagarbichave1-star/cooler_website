@@ -53,13 +53,13 @@ export default function HomePage() {
           <div className="hero-copy">
             <p className="hero-eyebrow">
               <span className="hero-eyebrow-mark" aria-hidden="true"><Waves size={15} /></span>
-              <span className="hero-eyebrow-name">Tirupati Coolers</span>
+              <span className="hero-eyebrow-name">Trimurti Coolers</span>
               <span className="hero-eyebrow-divider" aria-hidden="true" />
               <span className="hero-location"><MapPin size={13} aria-hidden="true" /> Surat, Gujarat</span>
             </p>
             <h1>Find the right cooler for your space.</h1>
             <p className="hero-description">
-              Explore the Tirupati cooler range and send a direct product enquiry on WhatsApp.
+              Explore the Trimurti cooler range and send a direct product enquiry on WhatsApp.
             </p>
             <div className="hero-actions">
               <Link className="button" href="#catalogue">
@@ -92,12 +92,12 @@ export default function HomePage() {
       <section className="section about-section" id="about">
         <div className="container about-grid">
           <div>
-            <p className="eyebrow">About Tirupati</p>
+            <p className="eyebrow">About Trimurti</p>
             <h2>Cooling choices, made clear.</h2>
           </div>
           <div className="about-copy">
             <p>
-              Tirupati Coolers is based in Surat, Gujarat. This website is being prepared as a clear catalogue for exploring cooler categories and starting a direct enquiry.
+              Trimurti Coolers is based in Surat, Gujarat. This website is being prepared as a clear catalogue for exploring cooler categories and starting a direct enquiry.
             </p>
             <p>
               Product names, specifications and company details will be published only after they are verified.

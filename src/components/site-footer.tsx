@@ -10,7 +10,7 @@ import { PrivacySettingsButton } from "./privacy-controls";
 export function SiteFooter() {
   const year = new Date().getFullYear();
   const whatsappUrl = buildWhatsAppUrl(
-    "Hello Tirupati Coolers, I would like help choosing a cooler.",
+    "Hello Trimurti Coolers, I would like help choosing a cooler.",
   );
 
   return (
@@ -48,7 +48,7 @@ export function SiteFooter() {
                   <p>Product enquiries</p>
                   <a href={siteConfig.phoneHref}>{siteConfig.phone}</a>
                   <a href={whatsappUrl} target="_blank" rel="noreferrer">
-                    WhatsApp Tirupati Coolers <ArrowUpRight size={15} />
+                    WhatsApp Trimurti Coolers <ArrowUpRight size={15} />
                   </a>
                 </div>
               </article>
@@ -71,7 +71,7 @@ export function SiteFooter() {
       <div className="footer-strip">
         <div className="container footer-bottom">
           <Brand />
-          <p>&copy; {year} Tirupati Coolers</p>
+          <p>&copy; {year} Trimurti Coolers</p>
           <PrivacySettingsButton />
           <a href="#home">Back to top</a>
         </div>

@@ -7,7 +7,7 @@ export function buildWhatsAppUrl(message: string) {
 
 export function productEnquiryMessage(productName: string, pageUrl?: string) {
   const lines = [
-    `Hello Tirupati Coolers, I would like to know more about the ${productName}.`,
+    `Hello Trimurti Coolers, I would like to know more about the ${productName}.`,
     pageUrl ? `Product page: ${pageUrl}` : "",
   ].filter(Boolean);
 

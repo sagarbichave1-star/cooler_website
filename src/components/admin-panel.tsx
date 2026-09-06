@@ -27,7 +27,7 @@ import { productInput } from "@/lib/admin-validation";
 type DraftProduct = { slug: string; published: boolean; data: Product };
 const initialDrafts = products.map((data) => ({
   slug: data.slug,
-  published: false,
+  published: true,
   data,
 }));
 const emptyProduct: Product = {
@@ -51,6 +51,32 @@ const fields = [
   ["imageUrl", "Image URL (HTTPS)", 600, false],
 ] as const;
 
+class AdminRequestError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+  ) {
+    super(message);
+  }
+}
+
+async function requestProducts(method = "GET", body?: unknown) {
+  const response = await fetch("/api/admin/products", {
+    method,
+    cache: "no-store",
+    signal: AbortSignal.timeout(15000),
+    headers: body ? { "Content-Type": "application/json" } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const result = await response.json();
+  if (!response.ok)
+    throw new AdminRequestError(
+      result.error || "Could not update the catalogue.",
+      response.status,
+    );
+  return result;
+}
+
 export function AdminPanel({
   authenticated,
   configured,
@@ -71,6 +97,26 @@ export function AdminPanel({
   const [originalSlug, setOriginalSlug] = useState<string | null>(null);
   const [removeTarget, setRemoveTarget] = useState<string | null>(null);
   const editor = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    if (!signedIn) return;
+    let active = true;
+    requestProducts()
+      .then((result) => {
+        if (active) setDrafts(result.products);
+      })
+      .catch((issue) => {
+        if (issue instanceof AdminRequestError && issue.status === 401)
+          setSignedIn(false);
+        else if (active)
+          setError(
+            issue instanceof Error ? issue.message : "Could not load products.",
+          );
+      });
+    return () => {
+      active = false;
+    };
+  }, [signedIn]);
 
   useEffect(() => {
     if (!signedIn) return;
@@ -115,7 +161,8 @@ export function AdminPanel({
         body: JSON.stringify({ key }),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not update your session.");
+      if (!response.ok)
+        throw new Error(body.error || "Could not update your session.");
       setSignedIn(body.authenticated === true);
       setDrafts(initialDrafts);
       setNotice("");
@@ -147,14 +194,17 @@ export function AdminPanel({
     setError("");
   }
 
-  function saveDraft(event: FormEvent<HTMLFormElement>) {
+  async function saveDraft(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setBusy(true);
     try {
       const form = new FormData(event.currentTarget);
       const product = productInput({
         ...Object.fromEntries(form),
         published: form.get("published") === "on",
+        features: editing?.data.features,
+        specifications: editing?.data.specifications,
       });
       if (
         drafts.some(
@@ -162,18 +212,43 @@ export function AdminPanel({
         )
       )
         throw new Error("That product ID is already in use.");
+      const result = await requestProducts("PUT", {
+        originalSlug,
+        product: { ...product.data, published: product.published },
+      });
       setDrafts((items) =>
         originalSlug
-          ? items.map((item) => (item.slug === originalSlug ? product : item))
-          : [...items, product],
+          ? items.map((item) =>
+              item.slug === originalSlug ? result.product : item,
+            )
+          : [result.product, ...items],
       );
       editor.current?.close();
       setEditing(null);
       setNotice(
-        "Preview updated. Connect storage to save and publish these changes to the website.",
+        product.published
+          ? "Product saved and published to the website."
+          : "Product saved as a draft.",
       );
     } catch (issue) {
       setError((issue as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function deleteProduct(slug: string) {
+    setBusy(true);
+    setError("");
+    try {
+      await requestProducts("DELETE", { slug });
+      setDrafts((items) => items.filter((product) => product.slug !== slug));
+      setRemoveTarget(null);
+      setNotice("Product removed from the catalogue.");
+    } catch (issue) {
+      setError((issue as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -214,7 +289,7 @@ export function AdminPanel({
             <span className="admin-key-mark">
               <KeyRound size={26} />
             </span>
-            <p className="eyebrow">Tirupati Coolers</p>
+            <p className="eyebrow">Trimurti Coolers</p>
             <h2>Welcome back.</h2>
             <p>Enter your access key to open the admin workspace.</p>
             <label htmlFor="admin-access-key">Access key</label>
@@ -295,7 +370,7 @@ export function AdminPanel({
       <div className="admin-content">
         <header className="admin-page-heading">
           <div>
-            <p className="eyebrow">Tirupati Coolers / Admin</p>
+            <p className="eyebrow">Trimurti Coolers / Admin</p>
             <h1>
               {tab === "products" ? "Product catalogue" : "Customer enquiries"}
             </h1>
@@ -314,11 +389,10 @@ export function AdminPanel({
         <div className="admin-preview-note">
           <span className="admin-preview-dot" />
           <div>
-            <strong>Interface preview</strong>
+            <strong>MongoDB catalogue</strong>
             <p>
-              Database connection is paused. Product changes last until this
-              page is refreshed. The public catalogue stays as it is, and no
-              customer enquiries are being stored.
+              Published products appear on the website. Draft products remain
+              private. Customer enquiry storage is still pending.
             </p>
           </div>
         </div>
@@ -335,7 +409,7 @@ export function AdminPanel({
         )}
         <div className="admin-stats">
           <article>
-            <span>Product previews</span>
+            <span>Products</span>
             <strong>{drafts.length.toString().padStart(2, "0")}</strong>
           </article>
           <article>
@@ -418,14 +492,8 @@ export function AdminPanel({
                     <div className="admin-remove-confirm">
                       <span>Remove this product preview?</span>
                       <button
-                        onClick={() => {
-                          setDrafts((items) =>
-                            items.filter(
-                              (product) => product.slug !== item.slug,
-                            ),
-                          );
-                          setRemoveTarget(null);
-                        }}
+                        onClick={() => deleteProduct(item.slug)}
+                        disabled={busy}
                       >
                         Remove
                       </button>
@@ -543,10 +611,10 @@ export function AdminPanel({
             )}
             <div className="admin-editor-footer">
               <small>
-                Preview only. This does not publish to the website yet.
+                Drafts stay private. Ready products appear on the website.
               </small>
-              <button className="button">
-                Update preview <Check size={17} />
+              <button className="button" disabled={busy}>
+                {busy ? "Saving…" : "Save product"} <Check size={17} />
               </button>
             </div>
           </form>

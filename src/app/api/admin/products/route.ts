@@ -1,13 +1,24 @@
 import { MongoServerError } from "mongodb";
 import { isAdmin } from "@/lib/admin-auth";
 import { field, productInput, record } from "@/lib/admin-validation";
-import { listAdminProducts, removeProduct, saveProduct } from "@/lib/product-repository";
-import { formFailure, privateReply, readFormJson, RequestError, throttle } from "@/lib/request-guards";
+import {
+  listAdminProducts,
+  removeProduct,
+  saveProduct,
+} from "@/lib/product-repository";
+import {
+  formFailure,
+  privateReply,
+  readFormJson,
+  RequestError,
+  throttle,
+} from "@/lib/request-guards";
 
 export const dynamic = "force-dynamic";
 
 async function authorize() {
-  if (!(await isAdmin())) throw new RequestError(401, "Your admin session has expired.");
+  if (!(await isAdmin()))
+    throw new RequestError(401, "Your admin session has expired.");
 }
 
 export async function GET() {

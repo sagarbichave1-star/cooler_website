@@ -11,7 +11,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const whatsappUrl = buildWhatsAppUrl(
-    "Hello Tirupati Coolers, I would like help choosing a cooler.",
+    "Hello Trimurti Coolers, I would like help choosing a cooler.",
   );
 
   function focusCatalogueSearch() {

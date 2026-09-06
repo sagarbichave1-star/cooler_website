@@ -6,7 +6,7 @@ import {
 } from "node:crypto";
 
 const SESSION_LIFETIME = 60 * 60 * 4;
-export const adminCookie = "tirupati-admin-session";
+export const adminCookie = "trimurti-admin-session";
 
 function credentials() {
   const key = process.env.ADMIN_ACCESS_KEY || "";

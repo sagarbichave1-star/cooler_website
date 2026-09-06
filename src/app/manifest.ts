@@ -4,9 +4,9 @@ export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Tirupati Coolers",
-    short_name: "Tirupati",
-    description: "Browse the Tirupati Coolers product catalogue.",
+    name: "Trimurti Coolers",
+    short_name: "Trimurti",
+    description: "Browse the Trimurti Coolers product catalogue.",
     start_url: "/",
     display: "standalone",
     background_color: "#f5f9fc",

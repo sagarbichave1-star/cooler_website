@@ -18,7 +18,10 @@ export async function readFormJson(request: Request): Promise<unknown> {
   const expected = configuredOrigin || new URL(request.url).origin;
   if (!origin || origin !== new URL(expected).origin)
     throw new RequestError(403, "Request origin rejected.");
-  if (request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json")
+  if (
+    request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !==
+    "application/json"
+  )
     throw new RequestError(415, "Send JSON form data.");
   const maximumBytes = 16384;
   if (Number(request.headers.get("content-length")) > maximumBytes)
@@ -69,7 +72,11 @@ export function privateReply(data: unknown, status = 200, retryAfter?: number) {
 
 export function formFailure(error: unknown) {
   if (error instanceof RequestError)
-    return privateReply({ error: error.message }, error.status, error.retryAfter);
+    return privateReply(
+      { error: error.message },
+      error.status,
+      error.retryAfter,
+    );
   if (error instanceof InputError)
     return privateReply({ error: error.message }, 400);
   return privateReply(
@@ -80,12 +87,20 @@ export function formFailure(error: unknown) {
 
 // Temporary, per-process protection for this UI phase. A shared limiter is required
 // before deploying multiple instances or connecting production enquiry storage.
-type Bucket = "admin-login" | "admin-products" | "contact-preview" | "google-reviews";
+type Bucket =
+  "admin-login" | "admin-products" | "contact-preview" | "google-reviews";
 const attempts = new Map<Bucket, { count: number; until: number }>();
-export function throttle(key: Bucket, limit: number, windowMs = 15 * 60 * 1000) {
+export function throttle(
+  key: Bucket,
+  limit: number,
+  windowMs = 15 * 60 * 1000,
+) {
   const now = Date.now();
   const previous = attempts.get(key);
-  const bucket = previous && previous.until > now ? previous : { count: 0, until: now + windowMs };
+  const bucket =
+    previous && previous.until > now
+      ? previous
+      : { count: 0, until: now + windowMs };
   bucket.count += 1;
   attempts.set(key, bucket);
   if (bucket.count > limit)

@@ -16,7 +16,7 @@ export function WhatsAppLink({
 }: WhatsAppLinkProps) {
   const message = productName
     ? productEnquiryMessage(productName, pageUrl)
-    : "Hello Tirupati Coolers, I would like help choosing a cooler.";
+    : "Hello Trimurti Coolers, I would like help choosing a cooler.";
   const url = buildWhatsAppUrl(message);
 
   return (

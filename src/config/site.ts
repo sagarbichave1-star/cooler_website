@@ -5,10 +5,10 @@ const configuredMapQuery = process.env.NEXT_PUBLIC_GOOGLE_MAPS_QUERY?.trim() || 
 const configuredMapEmbedKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY?.trim() || "";
 
 export const siteConfig = {
-  name: "Tirupati Coolers",
-  shortName: "Tirupati",
+  name: "Trimurti Coolers",
+  shortName: "Trimurti",
   description:
-    "Explore the Tirupati Coolers catalogue and enquire about a product directly on WhatsApp.",
+    "Explore the Trimurti Coolers catalogue and enquire about a product directly on WhatsApp.",
   location: "Surat, Gujarat, India",
   phone: "+91 90331 48505",
   phoneHref: "tel:+919033148505",

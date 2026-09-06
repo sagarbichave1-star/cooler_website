@@ -1,18 +1,22 @@
 # Admin workspace
 
-The current phase is UI and interaction logic only. MongoDB is the selected database for the next phase; integration is paused by request.
+Product catalogue persistence uses MongoDB. Enquiry storage remains pending.
 
 ## Routes and access
 
 - `/admin`: one administrator role, access-key sign-in, no username or registration.
 - `/api/admin/session`: creates, checks and clears a four-hour session.
+- `/api/admin/products`: lists, creates, updates and removes products for an authenticated administrator.
+- `/api/products`: returns published products only.
 - `/api/enquiries`: validates contact input and the honeypot, then returns HTTP 503 until storage is connected. It does not persist personal data or return a false success for a real enquiry.
 
-Create two different random secrets in `.env.local`:
+Configure MongoDB and two different random secrets in the git-ignored `.env`:
 
 ```env
 ADMIN_ACCESS_KEY=<random value of at least 32 characters>
 ADMIN_SESSION_SECRET=<different random value of at least 32 characters>
+MONGODB_URI=<server-only connection string>
+MONGODB_DATABASE=trimurti_coolers
 ```
 
 Generate each value locally with `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"`.
@@ -22,11 +26,11 @@ The access key is compared using constant-time digest comparison. A signed sessi
 
 The UI checks expiry on focus and every minute. Any future privileged data endpoint must independently validate the session. Hiding an admin button is not authorization.
 
-## Product preview
+## Product catalogue
 
-The editor supports names, IDs, categories, descriptions, model numbers, capacity, cooling area, dimensions, power and an optional HTTPS image URL. Fields are validated before updating the preview. IDs must be unique. Products can be marked ready to publish, edited or removed after confirmation.
+The editor supports names, IDs, categories, descriptions, model numbers, capacity, cooling area, dimensions, power and an optional HTTPS image URL. Fields are validated before writes. IDs have a unique MongoDB index. Products can be private drafts, published, edited or removed after confirmation.
 
-Drafts live in React state only. Refreshing, signing out or session expiry clears them. Nothing is published to the public catalogue. Existing category previews are loaded as editable starting points. Image URLs are captured in drafts; asset upload and rendering are part of the later storage integration.
+The collection is created with MongoDB JSON Schema validation and indexes on first use. The 37 supplied products seed only a newly created collection, so deleting all products does not make them reappear. Published records appear on the public carousel. Drafts stay in admin. Image upload and rendering remain pending.
 
 ## Enquiries and privacy
 
@@ -40,13 +44,12 @@ Cookie settings persist an essential/external preference in local storage for up
 
 Use a Next.js server deployment with HTTPS. Set NEXT_PUBLIC_SITE_URL to the actual origin, including scheme and port for local development if specified. Plain static hosting cannot run key verification.
 
-MongoDB has been selected but no database has been provisioned or connected. Next steps:
+MongoDB product storage is implemented. A valid `MONGODB_URI` must still be supplied. Next steps:
 
-1. Connect MongoDB through a server-only client with connection pooling. Add product/enquiry repositories with server authorization on every operation. Keep MONGODB_URI out of public environment variables.
-2. Connect publishing to the homepage and add upload validation and storage.
-3. Add enquiry pagination, detail/status controls and retention/deletion handling.
-4. Replace the temporary global, per-process request limiter with a shared rate-limit store and deployment-level throttling. The present limiter resets on restart and is not shared between instances.
-5. Add persistent session revocation and operational logging that excludes keys and message contents.
+1. Add upload validation and storage for product photography.
+2. Add enquiry persistence, pagination, detail/status controls and retention/deletion handling.
+3. Replace the temporary global, per-process request limiter with a shared rate-limit store and deployment-level throttling. The present limiter resets on restart and is not shared between instances.
+4. Add persistent session revocation and operational logging that excludes keys and message contents.
 
 Planned collections: `products` (unique slug, draft/published state, verified details), `enquiries` (customer details, consent timestamp, status and created time), `admin_sessions` (hashed session identifier and TTL expiry), and `rate_limits` (atomic attempt counters and TTL expiry). Do not create a customer accounts collection; only the single admin role is required. Use paginated inbox queries indexed by creation time and status. Publish changes only after database acknowledgement; failed writes must preserve the editor state.
 

@@ -14,8 +14,8 @@ import "./admin-ui.css";
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Tirupati Coolers Surat | Explore Air Coolers",
-    template: "%s | Tirupati Coolers",
+    default: "Trimurti Coolers Surat | Explore Air Coolers",
+    template: "%s | Trimurti Coolers",
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
@@ -24,13 +24,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     siteName: siteConfig.name,
-    title: "Tirupati Coolers",
+    title: "Trimurti Coolers",
     description: siteConfig.description,
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tirupati Coolers",
+    title: "Trimurti Coolers",
     description: siteConfig.description,
   },
 };

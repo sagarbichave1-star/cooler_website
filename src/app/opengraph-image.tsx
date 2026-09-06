@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const dynamic = "force-static";
-export const alt = "Tirupati Coolers, Surat";
+export const alt = "Trimurti Coolers, Surat";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -37,7 +37,7 @@ export default function OpenGraphImage() {
           SURAT, GUJARAT
         </div>
         <div style={{ display: "flex", fontSize: 94, fontWeight: 700, letterSpacing: -5, lineHeight: 1 }}>
-          Tirupati Coolers
+          Trimurti Coolers
         </div>
         <div style={{ display: "flex", marginTop: 28, color: "#c8dce6", fontSize: 34 }}>
           Find the right cooler for your space.
