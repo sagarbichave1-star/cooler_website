@@ -5,6 +5,23 @@ import { smoothScrollToElement } from "@/lib/smooth-scroll";
 
 export function SmoothAnchorLinks() {
   useEffect(() => {
+    function clearSectionFragment() {
+      if (!window.location.hash) return;
+
+      // Section IDs are useful link targets, but this single-page site keeps
+      // navigation state in the page itself. Remove an old or incoming hash
+      // once the browser has used it to position the visitor.
+      window.history.replaceState(
+        window.history.state,
+        "",
+        `${window.location.pathname}${window.location.search}`,
+      );
+    }
+
+    // A direct link such as /#catalogue is first handled natively by the
+    // browser. Clean its fragment after that positioning is complete.
+    clearSectionFragment();
+
     function handleAnchorClick(event: MouseEvent) {
       if (
         event.defaultPrevented
@@ -34,6 +51,7 @@ export function SmoothAnchorLinks() {
       // Keep the one-page navigation smooth without leaving a section fragment
       // in the address bar after the visitor moves around the page.
       smoothScrollToElement(target);
+      clearSectionFragment();
       // Move keyboard focus as native anchor navigation would.
       if (!target.hasAttribute("tabindex")) {
         target.tabIndex = -1;
