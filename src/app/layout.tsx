@@ -7,6 +7,7 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 import { SmoothAnchorLinks } from "@/components/smooth-anchor-links";
 import { PublicChrome } from "@/components/public-chrome";
 import { PrivacyProvider } from "@/components/privacy-controls";
+import { ConsentAwareGoogleAnalytics } from "@/components/google-analytics";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 import "./admin-ui.css";
@@ -14,7 +15,7 @@ import "./admin-ui.css";
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Trimurti Coolers Surat | Explore Air Coolers",
+    default: "Trimurti Coolers Surat | Authorised Novamax Distributor",
     template: "%s | Trimurti Coolers",
   },
   description: siteConfig.description,
@@ -24,13 +25,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     siteName: siteConfig.name,
-    title: "Trimurti Coolers",
+    title: "Trimurti Coolers | Novamax Air Coolers in Surat",
     description: siteConfig.description,
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Trimurti Coolers",
+    title: "Trimurti Coolers | Novamax Air Coolers in Surat",
     description: siteConfig.description,
   },
 };
@@ -45,13 +46,18 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const organizationJsonLd = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": "Store",
     name: siteConfig.name,
     url: siteConfig.url,
+    description: siteConfig.description,
+    telephone: siteConfig.phone,
+    areaServed: { "@type": "City", name: "Surat" },
     address: {
       "@type": "PostalAddress",
+      streetAddress: "5 Sonal Industrial, GHB Road, near Comet Motors",
       addressLocality: "Surat",
       addressRegion: "Gujarat",
+      postalCode: "394210",
       addressCountry: "IN",
     },
   };
@@ -83,6 +89,7 @@ export default function RootLayout({
           </PublicChrome>
           <SmoothAnchorLinks />
           <ServiceWorkerRegistration />
+          <ConsentAwareGoogleAnalytics />
         </PrivacyProvider>
       </body>
     </html>

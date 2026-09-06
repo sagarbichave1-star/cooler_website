@@ -9,7 +9,7 @@ import {
   SlidersHorizontal,
   X,
 } from "lucide-react";
-import { CoolerVisual } from "@/components/cooler-visual";
+import { ProductImage } from "@/components/product-image";
 import { ProductCard } from "@/components/product-card";
 import { WhatsAppLink } from "@/components/whatsapp-link";
 import { filterProducts, products, type Product } from "@/data/products";
@@ -22,18 +22,68 @@ export function CatalogueExplorer() {
   );
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
+  const [tankCapacity, setTankCapacity] = useState("All");
+  const [feature, setFeature] = useState("All");
+  const [sort, setSort] = useState<"featured" | "capacity" | "name">(
+    "featured",
+  );
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  const results = useMemo(
-    () => filterProducts(query, category, catalogue),
-    [query, category, catalogue],
-  );
+  const results = useMemo(() => {
+    const filtered = filterProducts(query, category, catalogue).filter(
+      (product) => {
+        const hasTank =
+          tankCapacity === "All" || product.tankCapacity === tankCapacity;
+        const productFeatures = [
+          ...(product.features || []),
+          ...(product.specifications || []).map(
+            (specification) => `${specification.label} ${specification.value}`,
+          ),
+        ]
+          .join(" ")
+          .toLocaleLowerCase();
+        const hasFeature =
+          feature === "All" || productFeatures.includes(feature.toLocaleLowerCase());
+
+        return hasTank && hasFeature;
+      },
+    );
+
+    return [...filtered].sort((left, right) => {
+      if (sort === "name") return left.name.localeCompare(right.name);
+      if (sort === "capacity") {
+        return (
+          Number.parseInt(left.tankCapacity || "0", 10) -
+          Number.parseInt(right.tankCapacity || "0", 10)
+        );
+      }
+      return Number(Boolean(right.featured)) - Number(Boolean(left.featured));
+    });
+  }, [query, category, tankCapacity, feature, sort, catalogue]);
   const productCategories = [
     "All",
     ...new Set(catalogue.map((product) => product.category)),
   ];
-  const hasFilters = Boolean(query.trim()) || category !== "All";
+  const tankCapacities = [
+    "All",
+    ...new Set(
+      catalogue
+        .map((product) => product.tankCapacity)
+        .filter((capacity): capacity is string => Boolean(capacity)),
+    ),
+  ].sort((left, right) => {
+    if (left === "All") return -1;
+    if (right === "All") return 1;
+    return Number.parseInt(left, 10) - Number.parseInt(right, 10);
+  });
+  const featureOptions = ["All", "Auto Swing", "Inverter compatible"];
+  const hasFilters =
+    Boolean(query.trim()) ||
+    category !== "All" ||
+    tankCapacity !== "All" ||
+    feature !== "All" ||
+    sort !== "featured";
 
   useEffect(() => {
     const controller = new AbortController();
@@ -43,6 +93,9 @@ export function CatalogueExplorer() {
         setCatalogue(result.products);
         setState(result.fallback ? "fallback" : "ready");
         setCategory("All");
+        setTankCapacity("All");
+        setFeature("All");
+        setSort("featured");
         setSelectedProduct(null);
       })
       .catch(() => {
@@ -61,11 +114,14 @@ export function CatalogueExplorer() {
 
   useEffect(() => {
     if (carouselRef.current) carouselRef.current.scrollLeft = 0;
-  }, [query, category, catalogue]);
+  }, [query, category, tankCapacity, feature, sort, catalogue]);
 
   function clearFilters() {
     setQuery("");
     setCategory("All");
+    setTankCapacity("All");
+    setFeature("All");
+    setSort("featured");
   }
 
   function moveCarousel(direction: -1 | 1) {
@@ -80,41 +136,50 @@ export function CatalogueExplorer() {
   return (
     <div className="catalogue-explorer">
       <div className="catalogue-controls">
-        <div className="catalogue-search">
-          <Search size={19} aria-hidden="true" />
-          <label className="sr-only" htmlFor="catalogue-search">
-            Search the catalogue
+        <div className="catalogue-controls-intro">
+          <span><SlidersHorizontal size={17} aria-hidden="true" /> Refine the range</span>
+          <p>Use model, range, tank capacity or a useful feature to narrow the catalogue.</p>
+        </div>
+        <div className="catalogue-filter-grid">
+          <div className="catalogue-search">
+            <Search size={19} aria-hidden="true" />
+            <label className="sr-only" htmlFor="catalogue-search">
+              Search the catalogue
+            </label>
+            <input
+              id="catalogue-search"
+              type="search"
+              value={query}
+              placeholder="Search by model or use"
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          </div>
+          <label className="filter-field">
+            <span>Range</span>
+            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+              {productCategories.map((item) => <option key={item}>{item}</option>)}
+            </select>
           </label>
-          <input
-            id="catalogue-search"
-            type="search"
-            value={query}
-            placeholder="Search products"
-            onChange={(event) => setQuery(event.target.value)}
-          />
-        </div>
-        <div className="filter-label" aria-hidden="true">
-          <SlidersHorizontal size={17} /> Filter by type
-        </div>
-        <div
-          className="category-filters"
-          aria-label="Filter products by category"
-        >
-          {productCategories.map((item) => (
-            <button
-              key={item}
-              type="button"
-              className={
-                category === item
-                  ? "category-filter is-active"
-                  : "category-filter"
-              }
-              aria-pressed={category === item}
-              onClick={() => setCategory(item)}
-            >
-              {item}
-            </button>
-          ))}
+          <label className="filter-field">
+            <span>Tank capacity</span>
+            <select value={tankCapacity} onChange={(event) => setTankCapacity(event.target.value)}>
+              {tankCapacities.map((capacity) => <option key={capacity}>{capacity}</option>)}
+            </select>
+          </label>
+          <label className="filter-field">
+            <span>Feature</span>
+            <select value={feature} onChange={(event) => setFeature(event.target.value)}>
+              {featureOptions.map((item) => <option key={item}>{item}</option>)}
+            </select>
+          </label>
+          <label className="filter-field">
+            <span>Order</span>
+            <select value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
+              <option value="featured">Featured</option>
+              <option value="capacity">Tank capacity</option>
+              <option value="name">Model name</option>
+            </select>
+          </label>
         </div>
       </div>
 
@@ -123,7 +188,7 @@ export function CatalogueExplorer() {
           {results.length} {results.length === 1 ? "product" : "products"}
           {state === "loading" && " · Checking the latest catalogue"}
           {state === "fallback" &&
-            " · Showing range previews. Confirm availability on WhatsApp."}
+            " · Confirm current availability on WhatsApp."}
         </p>
         {hasFilters && (
           <button type="button" onClick={clearFilters}>
@@ -214,11 +279,7 @@ export function CatalogueExplorer() {
               <X size={21} />
             </button>
             <div className="product-dialog-visual">
-              <CoolerVisual
-                visualId={`dialog-${selectedProduct.slug}`}
-                tone={selectedProduct.tone}
-                compact
-              />
+              <ProductImage product={selectedProduct} eager />
             </div>
             <div className="product-dialog-copy">
               <p className="eyebrow">{selectedProduct.category} series</p>
@@ -285,7 +346,6 @@ export function CatalogueExplorer() {
               ) : null}
               <WhatsAppLink
                 productName={selectedProduct.name}
-                pageUrl="#catalogue"
                 label="Enquire about this product"
               />
             </div>

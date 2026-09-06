@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Waves } from "lucide-react";
+import Image from "next/image";
 
 type BrandProps = {
   onClick?: () => void;
@@ -8,12 +8,14 @@ type BrandProps = {
 export function Brand({ onClick }: BrandProps) {
   return (
     <Link className="brand" href="/" aria-label="Trimurti Coolers home" onClick={onClick}>
-      <span className="brand-mark" aria-hidden="true">
-        <Waves size={20} strokeWidth={1.8} />
-      </span>
-      <span className="brand-name">
-        Trimurti <strong>Coolers</strong>
-      </span>
+      <Image
+        className="brand-logo"
+        src="/brand/trimurti-coolers-logo.svg"
+        alt="Trimurti Coolers"
+        width={560}
+        height={160}
+        priority
+      />
     </Link>
   );
 }

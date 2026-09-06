@@ -91,8 +91,8 @@ export function PrivacyProvider({ children }: { children: ReactNode }) {
             <p>
               We remember your preferences and use an essential cookie for admin
               sign-in. Google Maps and review images load only if you allow
-              external content. No analytics or advertising trackers are
-              installed.
+              external content. Optional Google Analytics loads only after
+              you allow Google content and only when the site owner enables it.
             </p>
             <div className="cookie-actions">
               <button

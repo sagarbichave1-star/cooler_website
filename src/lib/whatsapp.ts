@@ -5,11 +5,6 @@ export function buildWhatsAppUrl(message: string) {
   return `https://wa.me${recipient}?text=${encodeURIComponent(message)}`;
 }
 
-export function productEnquiryMessage(productName: string, pageUrl?: string) {
-  const lines = [
-    `Hello Trimurti Coolers, I would like to know more about the ${productName}.`,
-    pageUrl ? `Product page: ${pageUrl}` : "",
-  ].filter(Boolean);
-
-  return lines.join("\n");
+export function productEnquiryMessage(productName: string) {
+  return `Hello Trimurti Coolers, I would like to know more about the ${productName}.`;
 }

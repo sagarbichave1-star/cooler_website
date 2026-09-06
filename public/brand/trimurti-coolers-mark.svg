@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Trimurti Coolers TE mark</title>
+  <path d="M116 33a64 64 0 1 0 17 101" fill="none" stroke="#071f4f" stroke-width="14" stroke-linecap="round"/>
+  <path d="M22 104a65 65 0 0 0 114 13" fill="none" stroke="#28c2df" stroke-width="13" stroke-linecap="round"/>
+  <path d="M43 68h86" stroke="#28c2df" stroke-width="16" stroke-linecap="round"/>
+  <path d="M65 53v55M98 53v55M57 53h49" fill="none" stroke="#083f78" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

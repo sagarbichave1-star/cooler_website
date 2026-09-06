@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Star } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import type { GoogleReviewSummary } from "@/lib/google-reviews";
 import { usePrivacy } from "./privacy-controls";
@@ -11,6 +11,60 @@ type ReviewResponse = {
   data?: GoogleReviewSummary;
   message?: string;
 };
+
+type CuratedReview = {
+  id: string;
+  author: string;
+  relativeDate: string;
+  text: string;
+};
+
+// Temporary no-billing fallback. These are concise paraphrases of selected
+// five-star comments observed on the verified Google listing on 2026-09-06.
+const curatedReviews: CuratedReview[] = [
+  {
+    id: "dhanashri-kakade",
+    author: "Dhanashri Kakade",
+    relativeDate: "3 years ago",
+    text: "Great product quality and good customer service.",
+  },
+  {
+    id: "jaspreet-singh",
+    author: "Jaspreet Singh",
+    relativeDate: "3 years ago",
+    text: "The team understood the need and suggested the right cooler.",
+  },
+  {
+    id: "ankita-rathod",
+    author: "Ankita Rathod",
+    relativeDate: "3 years ago",
+    text: "Amazing cooler design, comfortable airflow and wonderful service.",
+  },
+  {
+    id: "surbhi-agarwal",
+    author: "Surbhi Agarwal",
+    relativeDate: "3 years ago",
+    text: "Good quality, compact design and cool colours.",
+  },
+  {
+    id: "madhushree-kakade",
+    author: "Madhushree Kakade",
+    relativeDate: "3 years ago",
+    text: "Amazing product with great quality and customer service.",
+  },
+  {
+    id: "amol-khatri",
+    author: "Amol Khatri",
+    relativeDate: "2 years ago",
+    text: "A fine range of coolers and ACs with good customer service.",
+  },
+  {
+    id: "kanchan-khatri",
+    author: "Kanchan Khatri",
+    relativeDate: "3 years ago",
+    text: "Nice service and a quality cooler.",
+  },
+];
 
 function Stars({ rating }: { rating: number }) {
   return (
@@ -26,28 +80,118 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-export function GoogleReviews() {
-  const { external, openSettings } = usePrivacy();
-  if (!external)
-    return (
-      <section className="section reviews-section" id="reviews">
-        <div className="container">
-          <p className="eyebrow">Google reviews</p>
-          <div className="reviews-heading-row">
-            <h2>What customers say.</h2>
+function CuratedReviews() {
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const visibleReviews = Array.from({ length: 3 }, (_, offset) =>
+    curatedReviews[(reviewIndex + offset) % curatedReviews.length],
+  );
+
+  function moveReviews(direction: -1 | 1) {
+    setReviewIndex(
+      (current) =>
+        (current + direction + curatedReviews.length) % curatedReviews.length,
+    );
+  }
+
+  return (
+    <section
+      className="section reviews-section"
+      id="reviews"
+      aria-labelledby="reviews-heading"
+    >
+      <div className="container">
+        <div className="reviews-heading-row">
+          <div>
+            <p className="eyebrow">Selected Google feedback</p>
+            <h2 id="reviews-heading">What customers say.</h2>
           </div>
-          <div className="reviews-placeholder">
+          <div
+            className="review-summary"
+            aria-label="5.0 out of 5 from 50 Google reviews"
+          >
+            <strong>5.0</strong>
             <div>
-              <h3>Reviews from Google.</h3>
-              <p>Allow Google content to see customer reviews here.</p>
+              <Stars rating={5} />
+              <span>50 Google reviews</span>
             </div>
-            <button className="button button-secondary" onClick={openSettings}>
-              Choose privacy settings
-            </button>
           </div>
         </div>
-      </section>
-    );
+
+        <div className="reviews-carousel-wrap">
+          <div className="reviews-grid" aria-live="polite">
+            {visibleReviews.map((review) => (
+              <article className="review-card" key={review.id}>
+                <div className="review-card-top">
+                  <div className="review-author">
+                    <span aria-hidden="true">{review.author.charAt(0)}</span>
+                    <div>
+                      <strong>{review.author}</strong>
+                      <small>{review.relativeDate}</small>
+                    </div>
+                  </div>
+                  <Stars rating={5} />
+                </div>
+                <p>{review.text}</p>
+                <a
+                  className="review-source"
+                  href={siteConfig.mapUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View on Google Maps <ArrowUpRight size={14} />
+                </a>
+              </article>
+            ))}
+          </div>
+          <div
+            className="reviews-carousel-controls"
+            aria-label="Review carousel controls"
+          >
+            <span>7 selected summaries</span>
+            <div>
+              <button
+                type="button"
+                onClick={() => moveReviews(-1)}
+                aria-label="Previous reviews"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button
+                type="button"
+                onClick={() => moveReviews(1)}
+                aria-label="Next reviews"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="reviews-placeholder reviews-source-note">
+          <div>
+            <h3>See all 50 reviews on Google.</h3>
+            <p>
+              These selected summaries are a temporary presentation while the
+              server-side Google Places connection is being configured.
+            </p>
+          </div>
+          <a
+            className="button button-secondary"
+            href={siteConfig.mapUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open Google Maps <ArrowUpRight size={17} />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function GoogleReviews() {
+  const { external } = usePrivacy();
+  if (!external) return <CuratedReviews />;
   return <EnabledGoogleReviews />;
 }
 
@@ -80,6 +224,8 @@ function EnabledGoogleReviews() {
     loadReviews();
     return () => controller.abort();
   }, []);
+
+  if (state === "empty" || state === "error") return <CuratedReviews />;
 
   const sourceUrl = summary?.sourceUrl || siteConfig.mapUrl;
 
@@ -175,33 +321,9 @@ function EnabledGoogleReviews() {
           </div>
         )}
 
-        {(state === "empty" || state === "error") && (
-          <div className="reviews-placeholder">
-            <div>
-              <p className="eyebrow">Live connection pending</p>
-              <h3>
-                {state === "error"
-                  ? "Reviews are temporarily unavailable."
-                  : "Google reviews will appear here."}
-              </h3>
-              <p>
-                The layout is ready. Verified reviews will load automatically
-                after the Google Place ID and API credentials are added.
-              </p>
-            </div>
-            <a
-              className="button button-secondary"
-              href={siteConfig.mapUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open Google Maps <ArrowUpRight size={17} />
-            </a>
-          </div>
-        )}
-
         <p className="reviews-note">
-          Reviews shown are selected by Google and ordered by relevance.
+          Live reviews will replace this temporary selection once Google Places
+          credentials are enabled on the client server.
         </p>
       </div>
     </section>

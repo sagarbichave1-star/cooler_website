@@ -54,14 +54,11 @@ describe("catalogue search", () => {
 });
 
 describe("WhatsApp enquiry copy", () => {
-  it("includes the product and optional page URL", () => {
-    const message = productEnquiryMessage(
-      "Tower Cooler",
-      "https://example.com/catalogue/tower-cooler",
-    );
+  it("includes only the selected product", () => {
+    const message = productEnquiryMessage("Tower Cooler");
 
     expect(message).toContain("Tower Cooler");
-    expect(message).toContain("https://example.com/catalogue/tower-cooler");
+    expect(message).not.toContain("Product page:");
   });
 
   it("creates a direct WhatsApp enquiry using the configured company number", () => {

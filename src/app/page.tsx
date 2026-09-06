@@ -1,21 +1,19 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  Check,
   Droplets,
   Gauge,
   MapPin,
   Maximize2,
-  Search,
   Waves,
   Zap,
 } from "lucide-react";
 import { CatalogueExplorer } from "@/components/catalogue-explorer";
-import { CoolerVisual } from "@/components/cooler-visual";
 import { GoogleReviews } from "@/components/google-reviews";
-import { ScrollToExplore } from "@/components/scroll-to-explore";
+import { HeroProductRotator } from "@/components/hero-product-rotator";
 import { SectionHeading } from "@/components/section-heading";
 import { WhatsAppLink } from "@/components/whatsapp-link";
+import { products } from "@/data/products";
 
 const selectionPoints = [
   {
@@ -44,6 +42,36 @@ const selectionPoints = [
   },
 ];
 
+const faqItems = [
+  {
+    question: "Is Trimurti Coolers an authorised Novamax distributor?",
+    answer:
+      "Yes. Trimurti Coolers is an authorised Novamax distributor in Surat. Ask us on WhatsApp about the model that suits your space.",
+  },
+  {
+    question: "Can I see air-cooler specifications before I enquire?",
+    answer:
+      "Yes. Open any product in the catalogue to review the available capacity, power, dimensions and feature information before starting your WhatsApp enquiry.",
+  },
+  {
+    question: "Do you publish product prices on the website?",
+    answer:
+      "No. Availability and quotations are handled directly on WhatsApp so you can receive the right recommendation for your requirement.",
+  },
+];
+
+const heroProductSlugs = [
+  "gloster-150",
+  "rambo-150",
+  "rambo-jr-100",
+  "dominator",
+  "apex",
+];
+const heroProducts = heroProductSlugs.flatMap((slug) => {
+  const product = products.find((item) => item.slug === slug);
+  return product ? [product] : [];
+});
+
 export default function HomePage() {
   return (
     <>
@@ -55,11 +83,13 @@ export default function HomePage() {
               <span className="hero-eyebrow-mark" aria-hidden="true"><Waves size={15} /></span>
               <span className="hero-eyebrow-name">Trimurti Coolers</span>
               <span className="hero-eyebrow-divider" aria-hidden="true" />
-              <span className="hero-location"><MapPin size={13} aria-hidden="true" /> Surat, Gujarat</span>
+              <span className="hero-location"><MapPin size={13} aria-hidden="true" /> Authorised Novamax distributor · Surat</span>
             </p>
-            <h1>Find the right cooler for your space.</h1>
+            <h1>Novamax air coolers, clearly specified.</h1>
             <p className="hero-description">
-              Explore the Trimurti cooler range and send a direct product enquiry on WhatsApp.
+              Trimurti Coolers presents the Novamax range with the product
+              information that matters: capacity, airflow, dimensions and the
+              right context for every space.
             </p>
             <div className="hero-actions">
               <Link className="button" href="#catalogue">
@@ -67,100 +97,102 @@ export default function HomePage() {
               </Link>
               <WhatsAppLink className="button button-secondary" label="Ask on WhatsApp" />
             </div>
-            <ScrollToExplore />
           </div>
 
           <div className="hero-product">
-            <div className="hero-orbit orbit-one" aria-hidden="true" />
-            <div className="hero-orbit orbit-two" aria-hidden="true" />
-            <CoolerVisual visualId="home-hero" tone="ocean" />
-            <div className="hero-note note-top">
-              <span className="note-dot" />
-              <p><strong>Made for Indian spaces</strong>Product range preview</p>
-            </div>
-            <div className="hero-note note-bottom">
-              <MapPin size={18} />
-              <p><strong>Based in Surat</strong>Gujarat, India</p>
-            </div>
+            <HeroProductRotator products={heroProducts} />
           </div>
-        </div>
-        <div className="hero-ruler" aria-hidden="true">
-          {Array.from({ length: 15 }).map((_, index) => <span key={index} />)}
         </div>
       </section>
 
       <section className="section about-section" id="about">
         <div className="container about-grid">
           <div>
-            <p className="eyebrow">About Trimurti</p>
-            <h2>Cooling choices, made clear.</h2>
+            <p className="eyebrow">About Trimurti Coolers</p>
+            <h2>A straightforward way to choose well.</h2>
           </div>
           <div className="about-copy">
             <p>
-              Trimurti Coolers is based in Surat, Gujarat. This website is being prepared as a clear catalogue for exploring cooler categories and starting a direct enquiry.
+              Choosing an air cooler is about more than one number on a
+              specification sheet. The room, ventilation, refill routine and
+              intended use all shape the right choice.
             </p>
             <p>
-              Product names, specifications and company details will be published only after they are verified.
+              As Surat&apos;s authorised Novamax distributor, Trimurti Coolers
+              starts with that context. This site makes the range easier to
+              understand, then keeps the next conversation direct and useful
+              on WhatsApp.
             </p>
-          </div>
-          <div className="about-facts">
-            <article><MapPin size={20} /><span>Location</span><strong>Surat, Gujarat</strong></article>
-            <article><Search size={20} /><span>Catalogue</span><strong>Simple product search</strong></article>
-            <article><Check size={20} /><span>Enquiries</span><strong>Direct on WhatsApp</strong></article>
           </div>
         </div>
       </section>
 
       <section className="section catalogue-section" id="catalogue">
         <div className="container">
-          <SectionHeading
-            eyebrow="Product range"
-            title={<>Explore cooler <em>categories.</em></>}
-            description="Browse the initial range below. Accurate models and specifications can be added as soon as the final catalogue is available."
-          />
+          <div className="catalogue-intro">
+            <SectionHeading
+              eyebrow="Product range"
+              title={<>The Novamax range, <em>organised around your space.</em></>}
+              description="Every model is presented with its available specifications. Filter the range, compare what matters and continue the conversation on WhatsApp when you are ready."
+            />
+            <aside className="range-guide" aria-labelledby="range-guide-heading">
+              <p className="eyebrow">How to assess a cooler</p>
+              <h2 id="range-guide-heading">Four practical checks.</h2>
+              <ol>
+                {selectionPoints.map((point) => {
+                  const Icon = point.icon;
+                  return (
+                    <li key={point.number}>
+                      <span>{point.number}</span>
+                      <Icon size={18} aria-hidden="true" />
+                      <div>
+                        <h3>{point.title}</h3>
+                        <p>{point.text}</p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
+            </aside>
+          </div>
           <CatalogueExplorer />
         </div>
       </section>
 
-      <section className="catalogue-method" aria-labelledby="method-title">
-        <div className="container method-grid">
-          <div className="method-intro">
-            <p className="eyebrow light">A clearer catalogue</p>
-            <h2 id="method-title">Only the details that help you decide.</h2>
-            <p>Find a category, compare verified information and continue the conversation directly on WhatsApp.</p>
-          </div>
-          <ol className="method-list">
-            <li><span>01</span><div><Search size={22} /><h3>Find</h3><p>Search by product name, type or intended space.</p></div></li>
-            <li><span>02</span><div><Check size={22} /><h3>Compare</h3><p>Review product information in one consistent format.</p></div></li>
-            <li><span>03</span><div><ArrowRight size={22} /><h3>Enquire</h3><p>Send the selected product with your WhatsApp enquiry.</p></div></li>
-          </ol>
-        </div>
-      </section>
-
-      <section className="section guide-section" id="guide">
-        <div className="container guide-layout">
+      <section className="section faq-section" id="faq" aria-labelledby="faq-heading">
+        <div className="container faq-layout">
           <SectionHeading
-            eyebrow="How to choose"
-            title={<>Four useful things <em>to check.</em></>}
-            description="A practical starting point for comparing cooler models when verified specifications become available."
+            eyebrow="Useful answers"
+            title={<>A few things, <em>made clear.</em></>}
+            description="Direct answers about the Novamax range, product details and how Trimurti Coolers handles enquiries."
           />
-          <div className="selection-list">
-            {selectionPoints.map((point) => {
-              const Icon = point.icon;
-              return (
-                <article key={point.number} className="selection-item">
-                  <span className="selection-number">{point.number}</span>
-                  <span className="selection-icon"><Icon size={21} /></span>
-                  <h3>{point.title}</h3>
-                  <p>{point.text}</p>
-                </article>
-              );
-            })}
+          <div className="faq-list">
+            {faqItems.map((item) => (
+              <details key={item.question} className="faq-item">
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
 
       <GoogleReviews />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqItems.map((item) => ({
+              "@type": "Question",
+              name: item.question,
+              acceptedAnswer: { "@type": "Answer", text: item.answer },
+            })),
+          }).replace(/</g, "\\u003c"),
+        }}
+      />
     </>
   );
 }

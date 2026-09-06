@@ -3,19 +3,17 @@ import { buildWhatsAppUrl, productEnquiryMessage } from "@/lib/whatsapp";
 
 type WhatsAppLinkProps = {
   productName?: string;
-  pageUrl?: string;
   label?: string;
   className?: string;
 };
 
 export function WhatsAppLink({
   productName,
-  pageUrl,
   label = "Enquire on WhatsApp",
   className = "button",
 }: WhatsAppLinkProps) {
   const message = productName
-    ? productEnquiryMessage(productName, pageUrl)
+    ? productEnquiryMessage(productName)
     : "Hello Trimurti Coolers, I would like help choosing a cooler.";
   const url = buildWhatsAppUrl(message);
 
