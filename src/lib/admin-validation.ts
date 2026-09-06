@@ -66,6 +66,26 @@ export function productInput(value: unknown): {
       throw new InputError("Use an HTTPS image URL.");
     data.imageUrl = url.href;
   }
+  if (input.features !== undefined) {
+    if (!Array.isArray(input.features) || input.features.length > 20)
+      throw new InputError("Check product features.");
+    data.features = input.features.map((value) => {
+      if (typeof value !== "string" || !value.trim() || value.trim().length > 160)
+        throw new InputError("Check product features.");
+      return value.trim();
+    });
+  }
+  if (input.specifications !== undefined) {
+    if (!Array.isArray(input.specifications) || input.specifications.length > 50)
+      throw new InputError("Check product specifications.");
+    data.specifications = input.specifications.map((value) => {
+      const specification = record(value);
+      return {
+        label: field(specification, "label", 80),
+        value: field(specification, "value", 240),
+      };
+    });
+  }
   return { slug, published: input.published, data };
 }
 

@@ -80,7 +80,7 @@ export function formFailure(error: unknown) {
 
 // Temporary, per-process protection for this UI phase. A shared limiter is required
 // before deploying multiple instances or connecting production enquiry storage.
-type Bucket = "admin-login" | "contact-preview" | "google-reviews";
+type Bucket = "admin-login" | "admin-products" | "contact-preview" | "google-reviews";
 const attempts = new Map<Bucket, { count: number; until: number }>();
 export function throttle(key: Bucket, limit: number, windowMs = 15 * 60 * 1000) {
   const now = Date.now();
