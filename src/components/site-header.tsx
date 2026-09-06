@@ -20,7 +20,6 @@ export function SiteHeader() {
     if (!target) return;
 
     setMenuOpen(false);
-    window.history.replaceState(null, "", "#catalogue");
     smoothScrollToElement(target);
     window.setTimeout(() => input?.focus({ preventScroll: true }), 650);
   }

@@ -31,7 +31,8 @@ export function SmoothAnchorLinks() {
       if (!target) return;
 
       event.preventDefault();
-      window.history.replaceState(null, "", hash);
+      // Keep the one-page navigation smooth without leaving a section fragment
+      // in the address bar after the visitor moves around the page.
       smoothScrollToElement(target);
       // Move keyboard focus as native anchor navigation would.
       if (!target.hasAttribute("tabindex")) {
