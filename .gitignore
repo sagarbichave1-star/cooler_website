@@ -31,3 +31,14 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Local coding-agent instructions and workspace metadata
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.codex/
+.claude/
+.cursor/
+.windsurf/
+.aider*
+.github/copilot-instructions.md
