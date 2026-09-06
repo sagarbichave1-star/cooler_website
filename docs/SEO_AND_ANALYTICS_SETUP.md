@@ -15,7 +15,8 @@ This site is intentionally one page. The launch goal is to make that page easy f
 
 - The `sc-domain:trimurticooler.com` Google Search Console property is verified through the Cloudflare DNS record.
 - `https://www.trimurticooler.com/sitemap.xml` has been submitted in Search Console. Processing/indexing is asynchronous; verification and submission do not mean every result is indexed immediately.
-- The GA4 property **Trimurti Coolers** and its `https://www.trimurticooler.com` web stream have been created. Its Measurement ID is configured in Vercel as `NEXT_PUBLIC_GA_MEASUREMENT_ID` **Config** for Production and Preview. The ID is public by design, but analytics still loads only after optional consent.
+- The GA4 property **Trimurti Coolers** is owned by the Sagar business account, with property ID `268420711` and web stream `https://www.trimurticooler.com`. Its Measurement ID `G-F0NZ28DDLD` is configured in Vercel as `NEXT_PUBLIC_GA_MEASUREMENT_ID` **Config** for Production and Preview. The ID is public by design, but analytics still loads only after optional consent.
+- The earlier duplicate property created under another Google account was moved to Google Analytics Trash after the Sagar-owned stream was verified and deployed. Production no longer references its old Measurement ID.
 - Vercel Production uses `https://www.trimurticooler.com` as `NEXT_PUBLIC_SITE_URL`. The root domain redirects to that canonical `www` host.
 
 ## Ongoing launch responsibilities
@@ -38,4 +39,4 @@ Start with GA4's automatic page view. Once the site is live, add consent-aware c
 
 ## External-account actions still required
 
-Google Cloud Places credentials and the final Google Business Profile website/details still need to be completed. The Search Console property, sitemap submission, GA4 property and Vercel GA4 configuration are already in place.
+Google Cloud Places credentials and the final Google Business Profile website/details still need to be completed. The Search Console property, sitemap submission, Sagar-owned GA4 property and Vercel GA4 configuration are already in place.

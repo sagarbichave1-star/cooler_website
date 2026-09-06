@@ -45,7 +45,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=919999999999
 NEXT_PUBLIC_GOOGLE_MAPS_URL=https://maps.app.goo.gl/NnSCA2dcJWgCNA5g8
 NEXT_PUBLIC_GOOGLE_MAPS_QUERY=5 Sonal Industrial, GHB Road, Surat, Gujarat 394210
 NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY=
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-F0NZ28DDLD
 GOOGLE_PLACES_API_KEY=
 GOOGLE_PLACE_ID=
 MONGODB_URI=mongodb+srv://...
@@ -100,7 +100,7 @@ The project includes:
 - Store and FAQ structured data
 - Consent-aware GA4 component (inactive until configured)
 
-See [SEO and analytics setup](docs/SEO_AND_ANALYTICS_SETUP.md) for the launch sequence, Google account actions and content rules. See [brand notes](docs/BRAND_GUIDELINES.md) for the locked customer-facing identity and visual direction.
+The production GA4 stream is owned by the Sagar business account and uses Measurement ID `G-F0NZ28DDLD`; it is loaded only after optional visitor consent. Search Console owns the verified `sc-domain:trimurticooler.com` property and has the production sitemap submitted. See [SEO and analytics setup](docs/SEO_AND_ANALYTICS_SETUP.md) for the launch sequence, Google account actions and content rules. See [brand notes](docs/BRAND_GUIDELINES.md) for the locked customer-facing identity and visual direction.
 
 For the boundaries between the public page, product data, consent, Google services and deployment, see the [architecture and maintenance guide](docs/ARCHITECTURE.md).
 
@@ -116,7 +116,7 @@ Review [the security notes](docs/SECURITY_REVIEW.md), especially the hosting-lev
 
 - Add the production URL
 - Inspect every product image and specification against the current Novamax source
-- Configure GA4, Google Search Console, Google Places and Maps Embed credentials
+- Google Search Console and GA4 are configured; add the restricted Google Places and Maps Embed credentials when the live review feed is approved
 - Confirm the Google Business Profile details and final website URL
 - Create final social-sharing artwork
 - Validate metadata and structured data
