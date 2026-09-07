@@ -42,6 +42,19 @@ describe("dynamic catalogue", () => {
       fallback: false,
     });
   });
+  it("refreshes stale bundled image paths while preserving admin HTTPS images", () => {
+    const product = products[0];
+    expect(
+      parseCatalogue({
+        products: [{ ...product, imageUrl: "/products/apex-kazer.png" }],
+      })[0].imageUrl,
+    ).toBe("/products/apex.png");
+    expect(
+      parseCatalogue({
+        products: [{ ...product, imageUrl: "https://example.com/apex.png" }],
+      })[0].imageUrl,
+    ).toBe("https://example.com/apex.png");
+  });
   it.each(["network", "timeout", "http", "malformed"])(
     "keeps previews after %s failure",
     async (failure) => {

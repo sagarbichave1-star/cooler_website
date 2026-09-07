@@ -1,4 +1,4 @@
-import { products, type Product } from "@/data/products";
+import { productImages, products, type Product } from "@/data/products";
 import { productInput, record } from "./admin-validation";
 
 export function parseCatalogue(value: unknown): Product[] {
@@ -20,7 +20,10 @@ export function parseCatalogue(value: unknown): Product[] {
       imageUrl: bundledImage ? undefined : input.imageUrl,
       published: true,
     });
-    if (bundledImage) data.imageUrl = bundledImage;
+    const currentBundledImage = productImages[data.slug];
+    if (currentBundledImage && (!input.imageUrl || bundledImage))
+      data.imageUrl = currentBundledImage;
+    else if (bundledImage) data.imageUrl = bundledImage;
     if (slugs.has(data.slug)) throw new Error("Duplicate product ID.");
     slugs.add(data.slug);
     if (["ocean", "lagoon", "aqua", "mist"].includes(String(input.tone)))
