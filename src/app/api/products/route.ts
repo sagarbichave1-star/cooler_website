@@ -1,8 +1,18 @@
 import { listPublicProducts } from "@/lib/product-repository";
+import { unstable_cache } from "next/cache";
 import {
   listTrimurtiProducts,
   trimurtiCatalogueConfig,
 } from "@/lib/trimurti-catalogue";
+
+// Last good Trimurti catalogue, refreshed at most once a minute. A failed
+// refresh keeps the previous copy, so the website still shows the latest
+// Admin catalogue while the Trimurti server is unreachable.
+const cachedTrimurtiProducts = unstable_cache(
+  (url: string, token: string) => listTrimurtiProducts({ url, token }),
+  ["trimurti-catalogue"],
+  { revalidate: 60 },
+);
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +25,10 @@ export async function GET() {
     const trimurti = trimurtiCatalogueConfig();
     return Response.json(
       trimurti
-        ? { products: await listTrimurtiProducts(trimurti), source: "trimurti" }
+        ? {
+            products: await cachedTrimurtiProducts(trimurti.url, trimurti.token),
+            source: "trimurti",
+          }
         : { products: await listPublicProducts(), source: "database" },
       {
         headers: {

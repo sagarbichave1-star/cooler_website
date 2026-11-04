@@ -4,6 +4,10 @@ import { parseCatalogue } from "./catalogue";
 import { listPublicProducts } from "./product-repository";
 
 vi.mock("@/lib/product-repository", () => ({ listPublicProducts: vi.fn() }));
+// The data cache needs the Next server; tests exercise the uncached reader.
+vi.mock("next/cache", () => ({
+  unstable_cache: (reader: (...args: string[]) => unknown) => reader,
+}));
 
 const token = "tcat_" + "b".repeat(64);
 afterEach(() => {
