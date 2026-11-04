@@ -3,15 +3,46 @@
 import { useEffect, useState } from "react";
 import { ProductImage } from "@/components/product-image";
 import type { Product } from "@/data/products";
+import { loadCatalogue } from "@/lib/catalogue";
 
 const ROTATION_INTERVAL = 4800;
+const HERO_LIMIT = 5;
+
+/** Featured coolers with photos lead the banner, in catalogue order. */
+export function heroSelection(catalogue: Product[]) {
+  const withPhoto = catalogue.filter((product) => product.imageUrl);
+  const featured = withPhoto.filter((product) => product.featured);
+  return (featured.length ? featured : withPhoto).slice(0, HERO_LIMIT);
+}
 
 type HeroProductRotatorProps = {
   products: Product[];
 };
 
-export function HeroProductRotator({ products }: HeroProductRotatorProps) {
+export function HeroProductRotator({
+  products: initialProducts,
+}: HeroProductRotatorProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [liveProducts, setLiveProducts] = useState<Product[] | null>(null);
+  // The server renders the bundled set; the live catalogue (Trimurti Admin)
+  // replaces it so unpublished coolers leave the banner. During an outage
+  // the bundled set stays, matching the catalogue's own fallback.
+  const products = liveProducts ?? initialProducts;
+
+  useEffect(() => {
+    const controller = new AbortController();
+    loadCatalogue(controller.signal)
+      .then((result) => {
+        if (result.fallback) return;
+        const selection = heroSelection(result.products);
+        if (selection.length) {
+          setActiveIndex(0);
+          setLiveProducts(selection);
+        }
+      })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, []);
   const [motionAllowed, setMotionAllowed] = useState(true);
 
   useEffect(() => {
