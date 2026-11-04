@@ -843,6 +843,40 @@ footer[id] {
 
 .product-dialog-copy > p:not(.eyebrow) {
   color: var(--ink-soft);
+  /* Keep the line breaks typed in Trimurti Admin. */
+  white-space: pre-line;
+}
+
+.product-feature-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.55rem 1.25rem;
+  margin: 0 0 2rem;
+  padding: 0;
+  list-style: none;
+}
+
+.product-feature-list li {
+  position: relative;
+  padding-left: 1.4rem;
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.product-feature-list li::before {
+  position: absolute;
+  top: 0.45em;
+  left: 0;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--ocean);
+  content: "";
+}
+
+.product-dialog-copy dd {
+  overflow-wrap: anywhere;
 }
 
 .product-dialog-copy dl {

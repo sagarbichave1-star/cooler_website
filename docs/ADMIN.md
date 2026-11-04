@@ -28,6 +28,9 @@ The UI checks expiry on focus and every minute. Any future privileged data endpo
 
 ## Product catalogue
 
+**Trimurti Enterprise is the catalogue authority once connected.** In Trimurti Admin → Website catalogue, issue a token and copy `TRIMURTI_CATALOG_URL` and `TRIMURTI_CATALOG_TOKEN` into Vercel as server-only (Secret) variables for Production and Preview. `/api/products` then reads published coolers (descriptions, specifications, photos) from the Trimurti server, and `/admin` product writes return 409 because they would never reach visitors. Import the current catalogue once by saving this site's `/api/products` JSON and choosing it under Import in Trimurti. If the Trimurti server is unreachable, `/api/products` returns 503 and the page falls back to the bundled seed. Without these variables the MongoDB path below is unchanged.
+
+
 The editor supports names, IDs, categories, descriptions, model numbers, capacity, cooling area, dimensions, power and an optional HTTPS image URL. Fields are validated before writes. IDs have a unique MongoDB index. Products can be private drafts, published, edited or removed after confirmation.
 
 The collection is created with MongoDB JSON Schema validation and indexes on first use. The 37 supplied products seed only a newly created collection, so deleting all products does not make them reappear. Published records appear on the public carousel. Drafts stay in admin. Image upload and rendering remain pending.
