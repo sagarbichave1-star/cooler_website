@@ -13,6 +13,7 @@ import {
   RequestError,
   throttle,
 } from "@/lib/request-guards";
+import { trimurtiCatalogueConfig } from "@/lib/trimurti-catalogue";
 
 export const dynamic = "force-dynamic";
 
@@ -32,9 +33,21 @@ export async function GET() {
   }
 }
 
+// Once Trimurti supplies the catalogue, edits here would never reach visitors.
+function managedInTrimurti() {
+  return trimurtiCatalogueConfig()
+    ? privateReply(
+        { error: "Coolers are managed in Trimurti Admin → Website catalogue." },
+        409,
+      )
+    : null;
+}
+
 export async function PUT(request: Request) {
   try {
     await authorize();
+    const managed = managedInTrimurti();
+    if (managed) return managed;
     throttle("admin-products", 120);
     const input = record(await readFormJson(request));
     const originalSlug = field(input, "originalSlug", 80, false) || undefined;
@@ -52,6 +65,8 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     await authorize();
+    const managed = managedInTrimurti();
+    if (managed) return managed;
     throttle("admin-products", 120);
     const input = record(await readFormJson(request));
     if (!(await removeProduct(field(input, "slug", 80))))
