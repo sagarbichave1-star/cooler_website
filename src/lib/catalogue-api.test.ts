@@ -48,7 +48,7 @@ describe("dynamic catalogue", () => {
       parseCatalogue({
         products: [{ ...product, imageUrl: "/products/apex-kazer.png" }],
       })[0].imageUrl,
-    ).toBe("/products/apex.png");
+    ).toBe("/products/apex.webp");
     expect(
       parseCatalogue({
         products: [{ ...product, imageUrl: "https://example.com/apex.png" }],

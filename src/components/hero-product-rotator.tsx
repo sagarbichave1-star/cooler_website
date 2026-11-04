@@ -56,15 +56,6 @@ export function HeroProductRotator({
     return () => mediaQuery.removeEventListener("change", updateMotionPreference);
   }, []);
 
-  useEffect(() => {
-    // Decode later hero images before their first frame so CSS cross-fades do
-    // not reveal an empty image while the next product loads.
-    products.forEach((product) => {
-      if (!product.imageUrl) return;
-      const image = new window.Image();
-      image.src = product.imageUrl;
-    });
-  }, [products]);
 
   useEffect(() => {
     // Only one interval is active for a given product list; changing the list
@@ -91,11 +82,17 @@ export function HeroProductRotator({
             key={product.slug}
             aria-hidden={!isActive}
           >
-            <ProductImage
-              product={product}
-              className="hero-product-image"
-              eager={index === 0}
-            />
+            {/* Only the first photo loads up front; the next one is fetched
+                one frame ahead so the cross-fade never shows an empty box. */}
+            {index <= (activeIndex % products.length) + 1 ||
+            (activeIndex % products.length === products.length - 1 &&
+              index === 0) ? (
+              <ProductImage
+                product={product}
+                className="hero-product-image"
+                eager={index === 0}
+              />
+            ) : null}
           </span>
         );
       })}
