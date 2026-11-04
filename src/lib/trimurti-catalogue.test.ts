@@ -32,6 +32,17 @@ describe("Trimurti catalogue source", () => {
     expect(atlas.imageUrl).toMatch(/^https:\/\/triapp\.example\//);
   });
 
+  it("fills blank optional text so one cooler cannot reject the catalogue", async () => {
+    vi.stubEnv("TRIMURTI_CATALOG_URL", "https://triapp.example/api/v4/public/website-catalog");
+    vi.stubEnv("TRIMURTI_CATALOG_TOKEN", token);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ products: [
+      { slug: "new-one", name: "New One", category: "Tower" },
+    ] })));
+    const [cooler] = parseCatalogue(await (await GET()).json());
+    expect(cooler.summary).toBe("New One air cooler.");
+    expect(cooler.intendedFor).toBe("Tower");
+  });
+
   it("reports an outage instead of serving a stale database catalogue", async () => {
     vi.stubEnv("TRIMURTI_CATALOG_URL", "https://triapp.example/api/v4/public/website-catalog");
     vi.stubEnv("TRIMURTI_CATALOG_TOKEN", token);

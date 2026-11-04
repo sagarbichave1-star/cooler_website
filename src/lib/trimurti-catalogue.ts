@@ -33,12 +33,16 @@ export async function listTrimurtiProducts(config: {
   // Field names follow the Trimurti feed; the browser re-validates the result.
   return items.map((value) => {
     const item = value as Record<string, unknown>;
+    const name = String(item.name);
+    const category = String(item.category);
     return {
       slug: String(item.slug),
-      name: String(item.name),
-      category: String(item.category),
-      summary: text(item.summary) ?? "",
-      intendedFor: text(item.intended_for) ?? "",
+      name,
+      category,
+      // Optional in Trimurti but required by the website's validator: one
+      // blank cooler must not reject the whole catalogue.
+      summary: text(item.summary) ?? `${name} air cooler.`,
+      intendedFor: text(item.intended_for) ?? category,
       tone: "ocean",
       featured: item.featured === true,
       model: text(item.model),
