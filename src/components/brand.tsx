@@ -12,8 +12,9 @@ export function Brand({ onClick }: BrandProps) {
         className="brand-logo"
         src="/brand/trimurti-coolers-logo-generated.png"
         alt="Trimurti Coolers"
-        width={2073}
-        height={758}
+        width={1000}
+        height={366}
+        sizes="(max-width: 640px) 160px, 230px"
         priority
       />
     </Link>

@@ -12,7 +12,7 @@ export function parseCatalogue(value: unknown): Product[] {
     // Bundled cutouts are an intentionally closed set of first-party assets.
     // The admin API continues to accept HTTPS-only image URLs from users.
     const bundledImage = typeof input.imageUrl === "string" &&
-      /^\/products\/[a-z0-9-]+\.png$/.test(input.imageUrl)
+      /^\/products\/[a-z0-9-]+\.(png|webp)$/.test(input.imageUrl)
       ? input.imageUrl
       : undefined;
     const { data } = productInput({
