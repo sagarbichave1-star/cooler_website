@@ -76,6 +76,7 @@ export function SiteFooter() {
               Nyomik Tech Studios, LLP
             </a>
           </p>
+          <a href="/doors-windows-surat">Doors &amp; windows in Surat</a>
           <PrivacySettingsButton />
           <a href="#home">Back to top</a>
         </div>
