@@ -18,8 +18,9 @@ type CuratedReview = {
   text: string;
 };
 
-// No-billing fallback. These are concise paraphrases of selected five-star
-// comments observed on the verified Google listing on 2026-09-06. Replace
+// Shown only until the first daily Google refresh succeeds (or without a
+// Places key). These are concise paraphrases of selected five-star comments
+// observed on the verified Google listing on 2026-09-06; totals as of 2026-11-05. Replace
 // them only with attributable, permission-safe content; do not invent reviews.
 const curatedReviews: CuratedReview[] = [
   {
@@ -94,12 +95,12 @@ function CuratedReviews() {
           </div>
           <div
             className="review-summary"
-            aria-label="5.0 out of 5 from 50 Google reviews"
+            aria-label="4.9 out of 5 from 51 Google reviews"
           >
-            <strong>5.0</strong>
+            <strong>4.9</strong>
             <div>
               <Stars rating={5} />
-              <span>50 Google reviews</span>
+              <span>51 Google reviews</span>
             </div>
           </div>
         </div>
@@ -129,14 +130,14 @@ function CuratedReviews() {
 }
 
 export function GoogleReviews() {
+  // Review words come from our own server (refreshed daily from Google), so
+  // they show without any third-party request. Reviewer photos are loaded
+  // from Google only after the visitor allows external content.
   const { external } = usePrivacy();
-  // Live Google content is optional. A consent refusal retains a complete,
-  // static section rather than leaving a visible gap in the one-page layout.
-  if (!external) return <CuratedReviews />;
-  return <EnabledGoogleReviews />;
+  return <EnabledGoogleReviews showPhotos={external} />;
 }
 
-function EnabledGoogleReviews() {
+function EnabledGoogleReviews({ showPhotos }: { showPhotos: boolean }) {
   const [state, setState] = useState<"loading" | "ready" | "empty" | "error">(
     "loading",
   );
@@ -193,8 +194,11 @@ function EnabledGoogleReviews() {
             <h2 id="reviews-heading">What customers say.</h2>
           </div>
           {summary && (
-            <div
+            <a
               className="review-summary"
+              href={summary.sourceUrl || undefined}
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label={`${summary.rating} out of 5 from ${summary.totalReviews} Google reviews`}
             >
               <strong>{summary.rating.toFixed(1)}</strong>
@@ -202,7 +206,7 @@ function EnabledGoogleReviews() {
                 <Stars rating={summary.rating} />
                 <span>{summary.totalReviews} Google reviews</span>
               </div>
-            </div>
+            </a>
           )}
         </div>
 
@@ -234,10 +238,19 @@ function EnabledGoogleReviews() {
               {Array.from({ length: Math.min(3, summary.reviews.length) }, (_, offset) =>
                 summary.reviews[(reviewIndex + offset) % summary.reviews.length],
               ).map((review) => (
-                <article className="review-card review-card-enter" key={`${review.id}-${reviewIndex}`}>
+                <article className="review-card review-card-enter review-card-link" key={`${review.id}-${reviewIndex}`}>
+                  {review.sourceUrl || summary.sourceUrl ? (
+                    <a
+                      className="review-card-cover"
+                      href={review.sourceUrl || summary.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Read ${review.authorName}'s review on Google`}
+                    />
+                  ) : null}
                   <div className="review-card-top">
                     <div className="review-author">
-                      {review.authorPhotoUrl ? (
+                      {showPhotos && review.authorPhotoUrl ? (
                         // Google review avatars are dynamic third-party URLs and cannot use a fixed Next Image host allowlist.
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -251,19 +264,14 @@ function EnabledGoogleReviews() {
                         <span aria-hidden="true">{review.authorName.charAt(0)}</span>
                       )}
                       <div>
-                        {review.authorUrl ? (
-                          <a href={review.authorUrl} target="_blank" rel="noreferrer">
-                            {review.authorName}
-                          </a>
-                        ) : (
-                          <strong>{review.authorName}</strong>
-                        )}
+                        <strong>{review.authorName}</strong>
                         <small>{review.relativeDate}</small>
                       </div>
                     </div>
                     <Stars rating={review.rating} />
                   </div>
-                  <p>{review.text || "This reviewer left a star rating on Google."}</p>
+                  <p>{review.text}</p>
+                  <small className="review-source">Google review</small>
                 </article>
               ))}
             </div>

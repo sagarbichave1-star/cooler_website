@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
@@ -13,6 +14,13 @@ import { siteConfig } from "@/config/site";
 import "./globals.css";
 import "./admin-ui.css";
 
+// Self-hosted at build time: no font request reaches Google from visitors.
+const sans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
+
 export const metadata: Metadata = {
   // Metadata uses the same canonical host as robots and sitemap. Do not set a
   // second URL here: search engines need one unambiguous public origin.
@@ -23,6 +31,27 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
+  keywords: [
+    "air cooler Surat",
+    "cooler shop Surat",
+    "Novamax cooler Surat",
+    "Novamax distributor Surat",
+    "desert cooler Surat",
+    "tower cooler Surat",
+    "cooler service Surat",
+    "doors and windows Surat",
+    "Trimurti Coolers",
+  ],
+  creator: "Nyomik Tech Studios, LLP",
+  publisher: siteConfig.name,
+  category: "Home appliances",
+  other: {
+    // Local search signals for Surat, matching the Google Business Profile.
+    "geo.region": "IN-GJ",
+    "geo.placename": "Surat",
+    "geo.position": "21.1511821;72.8352649",
+    ICBM: "21.1511821, 72.8352649",
+  },
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -51,12 +80,22 @@ export default function RootLayout({
     // This is business identity schema, not a product feed. Keep the physical
     // address, phone and service claims aligned with the Google Business Profile.
     "@context": "https://schema.org",
-    "@type": "Store",
+    "@type": ["Store", "HomeAndConstructionBusiness"],
+    "@id": `${siteConfig.url}/#business`,
     name: siteConfig.name,
+    alternateName: ["Trimurti Enterprise", "Trimurti Coolers Surat"],
     url: siteConfig.url,
+    image: `${siteConfig.url}/opengraph-image`,
+    hasMap: siteConfig.mapUrl,
+    sameAs: [siteConfig.mapUrl, "https://www.instagram.com/trimurti_coolers/"],
+    geo: { "@type": "GeoCoordinates", latitude: 21.1511821, longitude: 72.8352649 },
+    knowsAbout: ["Air coolers", "Novamax coolers", "Cooler service and spare parts", "Doors and windows"],
     description: siteConfig.description,
     telephone: siteConfig.phone,
-    areaServed: { "@type": "City", name: "Surat" },
+    areaServed: [
+      { "@type": "City", name: "Surat" },
+      { "@type": "AdministrativeArea", name: "Surat district, Gujarat" },
+    ],
     address: {
       "@type": "PostalAddress",
       streetAddress: "5 Sonal Industrial, GHB Road, near Comet Motors",
@@ -68,7 +107,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className={sans.variable}>
       <body>
         {/* No Google request occurs here: this creates the deny-by-default queue
             before any optional Google tag can load. */}

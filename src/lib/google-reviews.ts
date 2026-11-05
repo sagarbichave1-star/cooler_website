@@ -23,6 +23,7 @@ type GoogleReviewResponse = {
   name?: unknown;
   rating?: unknown;
   text?: GoogleText;
+  originalText?: GoogleText;
   relativePublishTimeDescription?: unknown;
   googleMapsUri?: unknown;
   authorAttribution?: GoogleAuthor;
@@ -63,14 +64,20 @@ export function normalizeGooglePlaceReviews(payload: GooglePlaceResponse): Googl
     rating: safeRating(payload.rating),
     totalReviews: typeof payload.userRatingCount === "number" && Number.isSafeInteger(payload.userRatingCount) ? Math.max(0, payload.userRatingCount) : 0,
     sourceUrl,
-    reviews: reviews.filter((review) => review && typeof review === "object").slice(0, 5).map((review, index) => ({
+    // Only reviews with both a star rating and written words, in the
+    // reviewer's original language; Google sends at most five.
+    reviews: reviews
+      .filter((review) => review && typeof review === "object")
+      .filter((review) => safeRating(review.rating) >= 1 && Boolean(optionalString(review.originalText?.text) || optionalString(review.text?.text)))
+      .slice(0, 5)
+      .map((review, index) => ({
       id: optionalString(review.name) || `review-${index}`,
       authorName: optionalString(review.authorAttribution?.displayName) || "Google reviewer",
       authorPhotoUrl: httpsUrl(review.authorAttribution?.photoUri),
       authorUrl: httpsUrl(review.authorAttribution?.uri),
       sourceUrl: httpsUrl(review.googleMapsUri),
       rating: safeRating(review.rating),
-      text: optionalString(review.text?.text),
+      text: optionalString(review.originalText?.text) || optionalString(review.text?.text),
       relativeDate: optionalString(review.relativePublishTimeDescription) || "Published on Google",
     })),
   };
